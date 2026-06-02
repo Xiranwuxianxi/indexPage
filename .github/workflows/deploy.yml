@@ -3,44 +3,57 @@ name: Deploy Vue Site to Server
 on:
   push:
     branches:
-      - main
+      - main # 当 main 分支有代码推送时触发
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 虚拟环境运行
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        # 将当前仓库代码检出到 runner 上
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+        # 安装 Node.js 22，用于构建 Vue 项目
 
       - name: Install dependencies
         run: npm ci
+        # 使用 npm ci 安装依赖，保证与 package-lock.json 一致
 
       - name: Build Vue project
         run: npm run build
+        # 执行 Vue 构建命令，将源码编译到 dist/ 目录
 
       - name: Setup SSH private key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+        # 创建 SSH 文件夹，把 GitHub Secrets 中的私钥写入文件并设置权限
+        # 注意：DEPLOY_KEY 需要在仓库 Secrets 中提前添加
 
       - name: Add server to known_hosts
         run: |
           ssh-keyscan -p ${{ secrets.DEPLOY_PORT }} ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+        # 将服务器的 SSH 公钥添加到 known_hosts 避免首次连接提示
+        # DEPLOY_HOST 和 DEPLOY_PORT 也需提前在 Secrets 设置
 
       - name: Create target directory
         run: |
           ssh -i ~/.ssh/deploy_key -p ${{ secrets.DEPLOY_PORT }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "mkdir -p ${{ secrets.DEPLOY_PATH }}"
+        # 在服务器上创建部署目录（如果已存在不会报错）
+        # DEPLOY_USER: SSH 用户名，DEPLOY_PATH: 网站部署路径
 
       - name: Deploy dist to server
         run: |
-          rsync -avz --delete \
+          rsync -avz \
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.DEPLOY_PORT }}" \
             dist/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/
+        # 将本地 dist/ 目录的内容同步到服务器指定目录
+        # rsync 后面加上--delete 参数会删除服务器上 dist 目录中本地不存在的文件，谨慎使用
+        # -avz 参数保证归档、详细输出、压缩传输

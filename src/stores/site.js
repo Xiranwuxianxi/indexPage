@@ -5,7 +5,7 @@ export const useSiteStore = defineStore('site', {
     avatarUrl:
       'https://foruda.gitee.com/avatar/1742624335238297405/15477280_litinyana_1742624335.png',
     selectedType: '全部',
-    signals: ['Compiler Lab', 'Blog Stream', 'Open Source'],
+    signals: ['Compiler Lab', 'Diary Space', 'Open Source'],
     projects: [
       {
         id: 'csandbox',
@@ -14,6 +14,14 @@ export const useSiteStore = defineStore('site', {
         type: '工具',
         status: 'Service Online',
         summary: '轻量级 C 语言在线编译环境，打开即写，适合快速验证想法、调试片段和记录实验结果。',
+      },
+      {
+        id: 'diaries',
+        name: '日记空间',
+        href: 'http://xiranya.cn/diaries/',
+        type: '日记',
+        status: 'Diary Active',
+        summary: '一个可以随手写日记、记录想法和沉淀生活片段的私人写作空间，把日常也纳入长期记录。',
       },
       {
         id: 'blog',
@@ -49,15 +57,15 @@ export const useSiteStore = defineStore('site', {
     timeline: [
       {
         label: 'Build',
-        text: '把工具、文章和开源项目收束成可访问的数字入口。',
+        text: '把工具、文章、日记和开源项目收束成可访问的数字入口。',
       },
       {
         label: 'Think',
-        text: '围绕底层逻辑、工程实践和系统设计持续记录。',
+        text: '围绕底层逻辑、工程实践、生活观察和系统设计持续记录。',
       },
       {
         label: 'Share',
-        text: '用可运行的代码和可复盘的文章，把学习过程公开出来。',
+        text: '用可运行的代码、可复盘的文章和可回看的日记，把成长过程沉淀下来。',
       },
     ],
   }),

@@ -15,25 +15,41 @@ const { focusAreas, socialLinks, timeline } = storeToRefs(site)
           <p class="eyebrow">ABOUT THE LAB</p>
           <h1 id="about-title">关于这个空间</h1>
           <p class="page-lead">
-            它不是传统意义上的作品集，更像一个持续扩展的数字工作台：把能运行的工具、能复盘的文章和能追踪的代码放在一起。
+            它不是传统意义上的作品集，更像一个持续扩展的数字工作台：工具、文章、日记、代码和内容平台都在这里汇合。
           </p>
         </div>
       </div>
+
+      <section class="social-grid social-grid-lead" aria-label="个人平台">
+        <a
+          v-for="link in socialLinks"
+          :key="link.id"
+          class="social-card"
+          :class="`is-${link.tone}`"
+          :href="link.href"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span>{{ link.handle }}</span>
+          <strong>{{ link.label }}</strong>
+          <p>{{ link.summary }}</p>
+        </a>
+      </section>
 
       <div class="about-layout">
         <article class="about-panel">
           <h2>探索底层逻辑，用代码重构世界。</h2>
           <p>
-            我喜欢从“为什么这样工作”开始拆问题，再把答案变成可运行、可验证、可分享的东西。这个主页会继续往工具集、实验模块和技术笔记方向生长。
+            我喜欢从“为什么这样工作”开始拆问题，再把答案变成可运行、可验证、可分享的东西。这个主页会继续往工具集、实验模块、技术笔记和内容创作方向生长。
           </p>
           <div class="panel-actions">
             <a
               class="action primary"
-              href="https://gitee.com/litinyana"
+              href="https://github.com/Xiranwuxianxi"
               target="_blank"
-              rel="noreferrer"
+              rel="me noopener noreferrer"
             >
-              查看开源主页
+              关注 GitHub
             </a>
             <a
               class="action secondary"
@@ -61,21 +77,6 @@ const { focusAreas, socialLinks, timeline } = storeToRefs(site)
             <li v-for="item in area.items" :key="item">{{ item }}</li>
           </ul>
         </article>
-      </section>
-
-      <section class="social-grid" aria-label="个人平台">
-        <a
-          v-for="link in socialLinks"
-          :key="link.id"
-          class="social-card"
-          :href="link.href"
-          target="_blank"
-          rel="me noopener noreferrer"
-        >
-          <span>个人平台</span>
-          <strong>{{ link.label }}</strong>
-          <p>{{ link.summary }}</p>
-        </a>
       </section>
     </section>
   </main>

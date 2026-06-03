@@ -10,20 +10,26 @@ export const useSiteStore = defineStore('site', {
       {
         id: 'github',
         label: 'GitHub',
+        handle: '@Xiranwuxianxi',
         href: 'https://github.com/Xiranwuxianxi',
-        summary: '开源代码与项目仓库',
+        summary: '开源代码、项目仓库和工程实践都在这里。',
+        tone: 'cyan',
       },
       {
         id: 'bilibili',
         label: 'B 站',
+        handle: '3494360370907205',
         href: 'https://space.bilibili.com/3494360370907205?spm_id_from=333.1007.0.0',
-        summary: '视频内容与学习记录',
+        summary: '视频内容、学习记录和更完整的表达。',
+        tone: 'pink',
       },
       {
         id: 'douyin',
         label: '抖音',
+        handle: '关注我的日常',
         href: 'https://www.douyin.com/user/MS4wLjABAAAAlQ6nUTklviASd3lZjc8bQC04lgBcw6YN0MYNxwmhhBVH4tUSZFcDc6cqxpSAupm8?from_tab_name=main',
-        summary: '短视频与日常分享',
+        summary: '短视频、灵感片段和日常更新。',
+        tone: 'gold',
       },
     ],
     projects: [
@@ -57,7 +63,7 @@ export const useSiteStore = defineStore('site', {
         href: 'https://gitee.com/litinyana',
         type: '源码',
         status: 'Open Source',
-        summary: '开源仓库集合，沉淀项目实践、代码片段和工具原型，也欢迎 Star、Fork 与交流。',
+        summary: 'Gitee 开源仓库集合，沉淀项目实践、代码片段和工具原型，也欢迎 Star、Fork 与交流。',
       },
     ],
     focusAreas: [
@@ -100,7 +106,7 @@ export const useSiteStore = defineStore('site', {
     },
     metrics: (state) => [
       { value: state.projects.length, label: '项目入口' },
-      { value: state.socialLinks.length, label: '个人平台' },
+      { value: state.socialLinks.length, label: '重点平台' },
       { value: '持续', label: '更新中' },
     ],
     featuredProject: (state) => state.projects[0],

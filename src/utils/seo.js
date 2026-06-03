@@ -1,8 +1,9 @@
 const defaultSeo = {
   title: '希燃呐 | 数字研发实验场',
   description:
-    '希燃呐的个人数字主页，收录 C-Sandbox 在线编译、日记空间、技术博客、开源项目和持续生长的研发实验。',
-  keywords: '希燃呐,Xiran,C-Sandbox,在线编译,日记,技术博客,开源项目,Vue,Vite,个人主页',
+    '希燃呐的个人数字主页，收录 C-Sandbox 在线编译、日记空间、技术博客、开源项目，并关联 GitHub、B 站、抖音等个人平台。',
+  keywords:
+    '希燃呐,Xiran,C-Sandbox,在线编译,日记,技术博客,开源项目,GitHub,B站,抖音,Vue,Vite,个人主页',
   canonical: 'http://xiranya.cn/',
   robots: 'index,follow',
 }

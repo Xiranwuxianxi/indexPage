@@ -300,6 +300,8 @@ p {
 
 .action:focus-visible,
 .project-card:focus-visible,
+.social-link:focus-visible,
+.social-card:focus-visible,
 .nav-links a:focus-visible,
 .brand:focus-visible,
 .site-footer a:focus-visible,
@@ -409,6 +411,12 @@ p {
   margin-top: 32px;
 }
 
+.social-board {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
 .signal-row {
   display: flex;
   align-items: center;
@@ -420,6 +428,39 @@ p {
   background: rgba(255, 255, 255, 0.62);
   color: var(--ink);
   font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.social-link {
+  display: grid;
+  gap: 3px;
+  min-height: 52px;
+  padding: 10px 12px;
+  border: 1px solid rgba(23, 33, 27, 0.12);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(11, 143, 170, 0.28);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.social-link strong {
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.social-link span {
+  color: var(--muted);
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
@@ -527,7 +568,8 @@ p {
 
 .project-grid,
 .focus-grid,
-.insight-grid {
+.insight-grid,
+.social-grid {
   display: grid;
   gap: 16px;
 }
@@ -537,14 +579,16 @@ p {
 }
 
 .focus-grid,
-.insight-grid {
+.insight-grid,
+.social-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 16px;
 }
 
 .project-card,
 .focus-card,
-.insight-card {
+.insight-card,
+.social-card {
   border: 1px solid rgba(23, 33, 27, 0.13);
   border-radius: 8px;
   background: var(--paper);
@@ -667,7 +711,8 @@ p {
 }
 
 .focus-card,
-.insight-card {
+.insight-card,
+.social-card {
   padding: 24px;
 }
 
@@ -676,6 +721,40 @@ p {
   color: var(--ink);
   font-size: 1.1rem;
   font-weight: 900;
+}
+
+.social-card {
+  display: grid;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.social-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(11, 143, 170, 0.28);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.social-card span {
+  color: var(--cyan);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.social-card strong {
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.social-card p {
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .focus-card ul,
@@ -801,6 +880,12 @@ p {
   text-decoration: none;
 }
 
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .page-enter-active,
 .page-leave-active {
   transition:
@@ -819,6 +904,7 @@ p {
   .project-grid,
   .focus-grid,
   .insight-grid,
+  .social-grid,
   .about-layout,
   .not-found-panel {
     grid-template-columns: 1fr;

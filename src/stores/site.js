@@ -6,6 +6,26 @@ export const useSiteStore = defineStore('site', {
       'https://foruda.gitee.com/avatar/1742624335238297405/15477280_litinyana_1742624335.png',
     selectedType: '全部',
     signals: ['Compiler Lab', 'Diary Space', 'Open Source'],
+    socialLinks: [
+      {
+        id: 'github',
+        label: 'GitHub',
+        href: 'https://github.com/Xiranwuxianxi',
+        summary: '开源代码与项目仓库',
+      },
+      {
+        id: 'bilibili',
+        label: 'B 站',
+        href: 'https://space.bilibili.com/3494360370907205?spm_id_from=333.1007.0.0',
+        summary: '视频内容与学习记录',
+      },
+      {
+        id: 'douyin',
+        label: '抖音',
+        href: 'https://www.douyin.com/user/MS4wLjABAAAAlQ6nUTklviASd3lZjc8bQC04lgBcw6YN0MYNxwmhhBVH4tUSZFcDc6cqxpSAupm8?from_tab_name=main',
+        summary: '短视频与日常分享',
+      },
+    ],
     projects: [
       {
         id: 'csandbox',
@@ -80,7 +100,7 @@ export const useSiteStore = defineStore('site', {
     },
     metrics: (state) => [
       { value: state.projects.length, label: '项目入口' },
-      { value: '24h', label: '在线访问' },
+      { value: state.socialLinks.length, label: '个人平台' },
       { value: '持续', label: '更新中' },
     ],
     featuredProject: (state) => state.projects[0],

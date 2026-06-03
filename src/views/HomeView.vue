@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router'
 import { useSiteStore } from '../stores/site'
 
 const site = useSiteStore()
-const { avatarUrl, focusAreas, metrics, projects, signals } = storeToRefs(site)
+const { avatarUrl, focusAreas, metrics, projects, signals, socialLinks } = storeToRefs(site)
 
 const handleAvatarError = (event) => {
   event.target.style.opacity = '0'
@@ -59,6 +59,20 @@ const handleAvatarError = (event) => {
             <span class="signal-dot"></span>
             <span>{{ signal }}</span>
           </div>
+        </div>
+
+        <div class="social-board" aria-label="个人平台">
+          <a
+            v-for="link in socialLinks"
+            :key="link.id"
+            class="social-link"
+            :href="link.href"
+            target="_blank"
+            rel="me noopener noreferrer"
+          >
+            <strong>{{ link.label }}</strong>
+            <span>{{ link.summary }}</span>
+          </a>
         </div>
 
         <div class="route-map" aria-hidden="true">

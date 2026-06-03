@@ -31,6 +31,7 @@
 - Open Graph 分享信息
 - Twitter Card 分享信息
 - JSON-LD 结构化数据
+- JSON-LD `sameAs` 身份关联链接，比如 GitHub、B 站、抖音
 
 这些内容在执行 `npm run build` 后会进入 `dist/index.html`。
 

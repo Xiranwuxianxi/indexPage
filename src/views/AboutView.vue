@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useSiteStore } from '../stores/site'
 
 const site = useSiteStore()
-const { focusAreas, timeline } = storeToRefs(site)
+const { focusAreas, socialLinks, timeline } = storeToRefs(site)
 </script>
 
 <template>
@@ -61,6 +61,21 @@ const { focusAreas, timeline } = storeToRefs(site)
             <li v-for="item in area.items" :key="item">{{ item }}</li>
           </ul>
         </article>
+      </section>
+
+      <section class="social-grid" aria-label="个人平台">
+        <a
+          v-for="link in socialLinks"
+          :key="link.id"
+          class="social-card"
+          :href="link.href"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span>个人平台</span>
+          <strong>{{ link.label }}</strong>
+          <p>{{ link.summary }}</p>
+        </a>
       </section>
     </section>
   </main>

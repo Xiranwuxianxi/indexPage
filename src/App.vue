@@ -1,8 +1,13 @@
 <script setup>
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 
+import { useSiteStore } from './stores/site'
+
 const route = useRoute()
+const site = useSiteStore()
+const { socialLinks } = storeToRefs(site)
 
 const navItems = [
   { label: '首页', to: '/' },
@@ -41,7 +46,17 @@ const shellClass = computed(() => ({
 
     <footer class="site-footer">
       <span>更多硬核模块与奇思妙想正在孵化中</span>
-      <a href="https://gitee.com/litinyana" target="_blank" rel="noreferrer">查看开源主页</a>
+      <div class="footer-links" aria-label="个人平台">
+        <a
+          v-for="link in socialLinks"
+          :key="link.id"
+          :href="link.href"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          {{ link.label }}
+        </a>
+      </div>
     </footer>
   </div>
 </template>

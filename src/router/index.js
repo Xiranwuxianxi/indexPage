@@ -14,7 +14,7 @@ const router = createRouter({
       meta: {
         title: '希燃呐 | 数字研发实验场',
         description:
-          '希燃呐的个人数字主页，收录 C-Sandbox 在线编译、日记空间、技术博客、开源项目和持续生长的研发实验。',
+          '希燃呐的个人数字主页，收录 C-Sandbox 在线编译、日记空间、技术博客、开源项目，并关联 GitHub、B 站、抖音等个人平台。',
         canonical: `${siteUrl}/`,
       },
     },
@@ -35,7 +35,7 @@ const router = createRouter({
       meta: {
         title: '关于这个空间 | 希燃呐',
         description:
-          '了解希燃呐数字研发实验场的建设方向：工具、文章、开源项目和持续记录的技术实践。',
+          '了解希燃呐数字研发实验场的建设方向、技术实践，以及 GitHub、B 站、抖音等个人平台入口。',
         canonical: `${siteUrl}/about`,
       },
     },

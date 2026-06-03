@@ -12,10 +12,11 @@
 - 日记空间：用于写日记、记录想法与生活片段
 - Halo 技术博客
 - Gitee 开源主页
+- GitHub、B 站、抖音个人平台入口
 - 技术方向与学习原则展示
 - Vue Router 站内导航：首页、项目、关于、站内 404
 - 独立的 404/失效页面
-- 基础 SEO：标题、描述、关键词、Canonical、Open Graph、Twitter Card、结构化数据、robots.txt、sitemap.xml
+- 基础 SEO：标题、描述、关键词、Canonical、Open Graph、Twitter Card、结构化数据、sameAs、robots.txt、sitemap.xml
 
 ## 本地运行
 

@@ -5,12 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "prebuild": "npm run sitemap",
     "build": "vite build",
+    "postbuild": "node scripts/write-seo-pages.mjs",
     "preview": "vite preview",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
     "pinia": "^3.0.4",
+    "sitemap": "^9.0.1",
     "vue": "^3.5.30",
     "vue-router": "^5.1.0"
   },

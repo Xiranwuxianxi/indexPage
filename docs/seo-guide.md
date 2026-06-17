@@ -35,12 +35,29 @@
 
 这些内容在执行 `npm run build` 后会进入 `dist/index.html`。
 
-### 2. 路由级 SEO
+### 2. 打包后生成路由静态页
+
+文件：
+
+- `scripts/write-seo-pages.mjs`
+- `package.json`
+
+本项目在 `npm run build` 后会自动执行 `postbuild`，把首页模板写成多份带独立 SEO 的静态 HTML：
+
+- `dist/index.html`
+- `dist/projects/index.html`
+- `dist/about/index.html`
+- `dist/404.html`
+
+这样即使机器人不执行 JavaScript，也能在 `/projects/`、`/about/` 看到独立的 `title`、`description`、`canonical`、`robots` 和 JSON-LD。
+
+### 3. 路由级 SEO
 
 文件：
 
 - `src/router/index.js`
 - `src/utils/seo.js`
+- `src/config/seo.js`
 
 每个路由在 `meta` 中配置自己的标题、描述和 canonical：
 
@@ -51,31 +68,47 @@
   meta: {
     title: '项目索引 | 希燃呐',
     description: '集中浏览希燃呐的在线工具、日记空间、技术博客和开源项目入口。',
-    canonical: 'http://xiranya.cn/projects',
+    canonical: 'http://xiranya.cn/projects/',
   },
 }
 ```
 
 路由切换后，`router.afterEach` 会调用 `applyRouteSeo`，更新浏览器里的标题和相关 meta 标签。
 
-### 3. robots.txt
+### 4. 站点链接信号
+
+搜索结果里主结果下面展开的多条入口，一般叫“站点链接”。它不是某个 meta 标签可以强制写出来的，而是搜索引擎根据站点结构自动生成。
+
+本项目为了提高出现站点链接的概率，做了这些信号：
+
+- 页头主导航保持清晰：首页、项目、关于。
+- 页脚提供完整站点入口：首页、项目索引、关于希燃呐、C-Sandbox、日记空间、技术博客。
+- JSON-LD 使用 `WebSite`、`WebPage`、`BreadcrumbList`、`ItemList`、`SiteNavigationElement` 描述核心入口。
+- sitemap 中列出重要公开页面。
+- `/projects/`、`/about/` 打包后有独立静态 HTML。
+
+上线后还需要在搜索引擎站长平台提交 sitemap，并等待重新抓取和重新评估。站点链接展示由搜索引擎决定，代码只能提高概率，不能保证一定出现。
+
+### 5. robots.txt
 
 文件：`public/robots.txt`
 
 它告诉搜索引擎哪些页面可以抓取，并声明 sitemap 地址。
 
-### 4. sitemap.xml
+### 6. sitemap.xml
 
-文件：`public/sitemap.xml`
+文件：`public/sitemap.xml`（由 `scripts/generate-sitemap.mjs` 在构建时自动生成）
 
-它列出希望搜索引擎发现的重要 URL，比如首页、项目页、关于页、C-Sandbox 和日记空间。
+它列出希望搜索引擎发现的重要 URL。脚本会根据 `src/config/seo.js` 中 `type: 'router'` 的 `siteNavigationLinks` 自动生成，默认包含首页、项目索引、关于页。
 
 ## 新增页面时要做什么
 
-1. 在 `src/router/index.js` 给路由添加 `meta.title`、`meta.description` 和 `meta.canonical`。
-2. 如果页面是重要公开入口，把 URL 加进 `public/sitemap.xml`。
-3. 如果页面不应该被索引，比如后台、登录页、错误页，设置 `noindex` 或不要放进 sitemap。
-4. 页面正文里要有清晰的标题、真实内容和可访问链接，不要只堆关键词。
+1. 在 `src/config/seo.js` 给页面添加标题、描述、canonical、keywords 和核心入口信息。
+2. 在 `src/router/index.js` 给路由引用对应的 SEO 配置。
+3. 如果页面是重要公开入口，在 `src/config/seo.js` 的 `siteNavigationLinks` 中添加一条 `type: 'router'` 记录，构建时会自动生成到 `public/sitemap.xml`。
+4. 如果页面不应该被索引，比如后台、登录页、错误页，设置 `noindex` 或不要放进 sitemap。
+5. 页面正文里要有清晰的标题、真实内容和可访问链接，不要只堆关键词。
+6. 如果希望打包后生成独立静态 HTML，把路由加入 `scripts/write-seo-pages.mjs`。
 
 ## 如果要做更强 SEO
 

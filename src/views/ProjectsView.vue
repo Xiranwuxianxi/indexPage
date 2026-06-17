@@ -5,6 +5,20 @@ import { useSiteStore } from '../stores/site'
 
 const site = useSiteStore()
 const { filteredProjects, projectTypes, selectedType } = storeToRefs(site)
+
+const handleCardMove = (event) => {
+  const card = event.currentTarget
+  const rect = card.getBoundingClientRect()
+  const x = ((event.clientX - rect.left) / rect.width) * 100
+  const y = ((event.clientY - rect.top) / rect.height) * 100
+  card.style.setProperty('--mouse-x', `${x}%`)
+  card.style.setProperty('--mouse-y', `${y}%`)
+}
+
+const handleCardLeave = (event) => {
+  event.currentTarget.style.removeProperty('--mouse-x')
+  event.currentTarget.style.removeProperty('--mouse-y')
+}
 </script>
 
 <template>
@@ -38,7 +52,12 @@ const { filteredProjects, projectTypes, selectedType } = storeToRefs(site)
         <span>{{ selectedType }}，命中 {{ filteredProjects.length }} 个入口。</span>
       </div>
 
-      <section class="project-grid project-board" aria-live="polite">
+      <TransitionGroup
+        tag="section"
+        class="project-grid project-board"
+        aria-live="polite"
+        name="project-board"
+      >
         <a
           v-for="project in filteredProjects"
           :key="project.id"
@@ -46,6 +65,8 @@ const { filteredProjects, projectTypes, selectedType } = storeToRefs(site)
           :href="project.href"
           target="_blank"
           rel="noreferrer"
+          @mousemove="handleCardMove"
+          @mouseleave="handleCardLeave"
         >
           <span class="project-type">{{ project.type }}</span>
           <h3>{{ project.name }}</h3>
@@ -55,7 +76,7 @@ const { filteredProjects, projectTypes, selectedType } = storeToRefs(site)
             {{ project.status }}
           </span>
         </a>
-      </section>
+      </TransitionGroup>
     </section>
   </main>
 </template>

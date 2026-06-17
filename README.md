@@ -31,7 +31,7 @@ npm run dev
 npm run build
 ```
 
-构建产物会输出到 `dist/`。`index.html` 中的基础 SEO 信息会被 Vite 带进构建结果；`public/robots.txt` 和 `public/sitemap.xml` 也会被复制到 `dist/` 根目录。
+构建产物会输出到 `dist/`。`index.html` 中的基础 SEO 信息会被 Vite 带进构建结果；`public/robots.txt` 会被复制到 `dist/` 根目录；`public/sitemap.xml` 由 `scripts/generate-sitemap.mjs` 在 `prebuild` 阶段自动生成，随后同样被复制到 `dist/`。
 
 ## 项目结构
 
@@ -47,7 +47,7 @@ src/
 
 public/
 ├── robots.txt   # 搜索引擎抓取规则
-└── sitemap.xml  # 站点地图
+└── sitemap.xml  # 站点地图（构建时自动生成）
 
 404.html         # 静态 404/失效页面
 ```

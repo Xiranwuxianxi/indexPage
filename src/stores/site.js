@@ -18,7 +18,7 @@ export const useSiteStore = defineStore('site', {
       {
         id: 'bilibili',
         label: 'B 站',
-        handle: '3494360370907205',
+        handle: '是希燃呀',
         href: 'https://space.bilibili.com/3494360370907205?spm_id_from=333.1007.0.0',
         summary: '视频内容、学习记录和更完整的表达。',
         tone: 'pink',

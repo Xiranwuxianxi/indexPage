@@ -22,10 +22,10 @@ const { focusAreas, socialLinks, timeline } = storeToRefs(site)
 
       <section class="social-grid social-grid-lead" aria-label="个人平台">
         <a
-          v-for="link in socialLinks"
+          v-for="(link, index) in socialLinks"
           :key="link.id"
-          class="social-card"
-          :class="`is-${link.tone}`"
+          class="social-card reveal"
+          :class="`is-${link.tone} reveal-${index + 1}`"
           :href="link.href"
           target="_blank"
           rel="me noopener noreferrer"
@@ -37,7 +37,7 @@ const { focusAreas, socialLinks, timeline } = storeToRefs(site)
       </section>
 
       <div class="about-layout">
-        <article class="about-panel">
+        <article class="about-panel reveal reveal-2">
           <h2>探索底层逻辑，用代码重构世界。</h2>
           <p>
             我喜欢从“为什么这样工作”开始拆问题，再把答案变成可运行、可验证、可分享的东西。这个主页会继续往工具集、实验模块、技术笔记和内容创作方向生长。
@@ -63,7 +63,12 @@ const { focusAreas, socialLinks, timeline } = storeToRefs(site)
         </article>
 
         <div class="timeline" aria-label="建设节奏">
-          <div v-for="item in timeline" :key="item.label" class="timeline-item">
+          <div
+            v-for="(item, index) in timeline"
+            :key="item.label"
+            class="timeline-item reveal"
+            :class="`reveal-${index + 2}`"
+          >
             <strong>{{ item.label }}</strong>
             <span>{{ item.text }}</span>
           </div>
@@ -71,7 +76,12 @@ const { focusAreas, socialLinks, timeline } = storeToRefs(site)
       </div>
 
       <section class="insight-grid" aria-label="技术方向">
-        <article v-for="area in focusAreas" :key="area.title" class="insight-card">
+        <article
+          v-for="(area, index) in focusAreas"
+          :key="area.title"
+          class="insight-card reveal"
+          :class="`reveal-${index + 1}`"
+        >
           <h3>{{ area.title }}</h3>
           <ul>
             <li v-for="item in area.items" :key="item">{{ item }}</li>

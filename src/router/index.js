@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { routeSeoMap } from '../config/seo'
 import { applyRouteSeo } from '../utils/seo'
-
-const siteUrl = 'http://xiranya.cn'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,44 +10,27 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue'),
-      meta: {
-        title: '希燃呐 | 数字研发实验场',
-        description:
-          '希燃呐的个人数字主页，收录 C-Sandbox 在线编译、日记空间、技术博客、开源项目，并关联 GitHub、B 站、抖音等个人平台。',
-        canonical: `${siteUrl}/`,
-      },
+      meta: routeSeoMap.home,
     },
     {
       path: '/projects',
+      alias: '/projects/',
       name: 'projects',
       component: () => import('../views/ProjectsView.vue'),
-      meta: {
-        title: '项目索引 | 希燃呐',
-        description: '集中浏览希燃呐的在线工具、日记空间、技术博客和开源项目入口，按类型快速筛选。',
-        canonical: `${siteUrl}/projects`,
-      },
+      meta: routeSeoMap.projects,
     },
     {
       path: '/about',
+      alias: '/about/',
       name: 'about',
       component: () => import('../views/AboutView.vue'),
-      meta: {
-        title: '关于这个空间 | 希燃呐',
-        description:
-          '了解希燃呐数字研发实验场的建设方向、技术实践，以及 GitHub、B 站、抖音等个人平台入口。',
-        canonical: `${siteUrl}/about`,
-      },
+      meta: routeSeoMap.about,
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),
-      meta: {
-        title: '页面未找到 | 希燃呐',
-        description: '当前站内路径没有匹配到页面，可以回到首页或项目索引继续浏览。',
-        canonical: `${siteUrl}/`,
-        robots: 'noindex,follow',
-      },
+      meta: routeSeoMap.notFound,
     },
   ],
   scrollBehavior() {

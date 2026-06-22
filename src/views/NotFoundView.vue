@@ -27,3 +27,56 @@ import { RouterLink } from 'vue-router'
     </section>
   </main>
 </template>
+
+<style scoped>
+.not-found-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+  gap: 24px;
+  align-items: center;
+  min-height: calc(100vh - 190px);
+}
+
+.not-found-code {
+  color: var(--cyan);
+  font-size: clamp(4.8rem, 16vw, 11rem);
+  font-weight: 950;
+  line-height: 0.9;
+  text-shadow: 0 0 28px rgba(0, 184, 255, 0.2);
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.route-card {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+}
+
+.route-card h2 {
+  font-size: 1.1rem;
+  font-weight: 950;
+}
+
+.route-card p {
+  margin-top: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 980px) {
+  .not-found-panel {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

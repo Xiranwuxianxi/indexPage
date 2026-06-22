@@ -2,8 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useSiteStore = defineStore('site', {
   state: () => ({
-    avatarUrl:
-      'https://foruda.gitee.com/avatar/1742624335238297405/15477280_litinyana_1742624335.png',
+    avatarUrl: '/avatar.png',
     selectedType: '全部',
     signals: ['Compiler Lab', 'Diary Space', 'Open Source'],
     socialLinks: [
@@ -14,6 +13,14 @@ export const useSiteStore = defineStore('site', {
         href: 'https://github.com/Xiranwuxianxi',
         summary: '开源代码、项目仓库和工程实践都在这里。',
         tone: 'cyan',
+      },
+      {
+        id: 'gitee',
+        label: 'Gitee',
+        handle: '@litinyana',
+        href: 'https://gitee.com/litinyana',
+        summary: 'Gitee 开源仓库集合，沉淀项目实践、代码片段和工具原型。',
+        tone: 'green',
       },
       {
         id: 'bilibili',
@@ -36,17 +43,21 @@ export const useSiteStore = defineStore('site', {
       {
         id: 'csandbox',
         name: 'C-Sandbox 在线编译',
-        href: 'http://xiranya.cn/csandbox/',
+        href: 'https://xiranya.cn/csandbox/',
         type: '工具',
         status: 'Service Online',
+        icon: '⚡',
+        tags: ['C', 'WebAssembly', 'Compiler'],
         summary: '轻量级 C 语言在线编译环境，打开即写，适合快速验证想法、调试片段和记录实验结果。',
       },
       {
         id: 'diaries',
         name: '日记空间',
-        href: 'http://xiranya.cn/diaries/',
+        href: 'https://xiranya.cn/diaries/',
         type: '日记',
         status: 'Diary Active',
+        icon: '📓',
+        tags: ['Halo', 'Writing', 'Personal'],
         summary: '一个可以随手写日记、记录想法和沉淀生活片段的私人写作空间，把日常也纳入长期记录。',
       },
       {
@@ -55,15 +66,9 @@ export const useSiteStore = defineStore('site', {
         href: 'http://halo.xiranya.cn/',
         type: '文章',
         status: 'Blog Active',
+        icon: '📚',
+        tags: ['Halo', 'Java', 'Vue'],
         summary: '基于 Halo 构建的个人技术博客，记录编译器、前后端工程、系统优化和持续学习的过程。',
-      },
-      {
-        id: 'gitee',
-        name: 'Gitee 开源主页',
-        href: 'https://gitee.com/litinyana',
-        type: '源码',
-        status: 'Open Source',
-        summary: 'Gitee 开源仓库集合，沉淀项目实践、代码片段和工具原型，也欢迎 Star、Fork 与交流。',
       },
     ],
     focusAreas: [
@@ -93,6 +98,11 @@ export const useSiteStore = defineStore('site', {
         label: 'Share',
         text: '用可运行的代码、可复盘的文章和可回看的日记，把成长过程沉淀下来。',
       },
+    ],
+    milestones: [
+      { date: '2025 年春', title: '主页上线', text: 'Vue 3 + Vite 版本的个人数字主页首次部署。' },
+      { date: '2025 年夏', title: 'SEO 增强', text: '引入路由级 SEO、结构化数据与构建后静态页生成。' },
+      { date: '2026 年夏', title: '持续迭代', text: '组件化重构、深色模式与性能优化陆续落地。' },
     ],
   }),
   getters: {

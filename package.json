@@ -10,7 +10,9 @@
     "build": "vite build",
     "postbuild": "node scripts/write-seo-pages.mjs",
     "preview": "vite preview",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "pinia": "^3.0.4",
@@ -19,7 +21,10 @@
     "vue-router": "^5.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@vitejs/plugin-vue": "^6.0.4",
+    "eslint": "^9.39.4",
+    "eslint-plugin-vue": "^10.9.2",
     "prettier": "3.8.1",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.7"

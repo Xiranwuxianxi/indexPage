@@ -59,7 +59,7 @@ npm run format
 
 - `npm run build` 会先执行 `prebuild` 钩子：`npm run sitemap`，调用 `scripts/generate-sitemap.mjs` 生成 `public/sitemap.xml`。
 - 随后 `vite build` 生成 `dist/`，包含 `index.html`、打包后的 JS/CSS 资源以及从 `public/` 复制过来的 `robots.txt`、`sitemap.xml`、`favicon.ico`。
-- 最后 `postbuild` 钩子执行 `scripts/write-seo-pages.mjs`，基于 `dist/index.html` 模板生成：
+- 最后 `postbuild` 钩子执行 `scripts/write-seo-pages.mjs`，基于 `dist/index.html` 模板，根据 `src/config/seo.js` 中的 `routeSeoMap` 自动生成：
   - `dist/index.html`（首页 SEO 内容被覆盖写入）
   - `dist/projects/index.html`
   - `dist/about/index.html`
@@ -269,7 +269,7 @@ Vue Router 配置在 `src/router/index.js`：
 1. 在 `src/config/seo.js` 的 `routeSeoMap` 中添加页面 SEO 配置。
 2. 在 `src/views/` 下创建新的 `.vue` 视图组件。
 3. 在 `src/router/index.js` 中添加路由，并设置 `meta: routeSeoMap.xxx`。
-4. 如需独立静态 HTML，在 `scripts/write-seo-pages.mjs` 中添加 `writeRoutePage('your-path', routeSeoMap.yourKey, template)`。
+4. 独立静态 HTML 会自动生成：`scripts/write-seo-pages.mjs` 会遍历 `routeSeoMap` 中的所有路由，无需手动添加 `writeRoutePage` 调用。
 5. 如果页面是公开入口，在 `src/config/seo.js` 的 `siteNavigationLinks` 中添加一条 `type: 'router'` 记录，`prebuild` 阶段会自动生成到 `public/sitemap.xml`。
 
 ### 修改站点导航

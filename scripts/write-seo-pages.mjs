@@ -59,13 +59,23 @@ const writeRoutePage = async (routePath, seo, template) => {
 
 const template = await readFile(indexPath, 'utf8')
 
-await writeFile(indexPath, updatePageHtml(template, routeSeoMap.home), 'utf8')
-await writeRoutePage('projects', routeSeoMap.projects, template)
-await writeRoutePage('about', routeSeoMap.about, template)
-await writeFile(
-  path.join(distDir, '404.html'),
-  updatePageHtml(template, routeSeoMap.notFound),
-  'utf8',
-)
+// 为 routeSeoMap 中的每条路由生成独立静态 HTML
+// home 覆盖 dist/index.html；notFound 输出到 404.html；其他输出到子目录
+for (const [key, seo] of Object.entries(routeSeoMap)) {
+  if (key === 'home') {
+    await writeFile(indexPath, updatePageHtml(template, seo), 'utf8')
+  } else if (key === 'notFound') {
+    await writeFile(
+      path.join(distDir, '404.html'),
+      updatePageHtml(template, seo),
+      'utf8',
+    )
+  } else {
+    const routePath = seo.canonical.replace(/^https?:\/\/[^/]+\//, '').replace(/\/$/, '')
+    if (routePath) {
+      await writeRoutePage(routePath, seo, template)
+    }
+  }
+}
 
-console.log('SEO static pages written: /, /projects/, /about/, /404.html')
+console.log('SEO static pages written from routeSeoMap')

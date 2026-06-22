@@ -4,4 +4,4 @@ Allow: /
 # 禁止抓取 404 页面匹配的无意义路径
 Disallow: /404
 
-Sitemap: http://xiranya.cn/sitemap.xml
+Sitemap: https://xiranya.cn/sitemap.xml

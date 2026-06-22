@@ -1,4 +1,4 @@
-export const siteBaseUrl = 'http://xiranya.cn'
+export const siteBaseUrl = 'https://xiranya.cn'
 
 export const siteBrand = '希燃呐'
 
@@ -66,6 +66,15 @@ export const siteNavigationLinks = [
     url: 'http://halo.xiranya.cn/',
     type: 'external',
     description: '记录编译器、前后端工程、系统优化和持续学习过程的技术博客。',
+  },
+  {
+    id: 'rss',
+    label: 'RSS 订阅',
+    navLabel: 'RSS',
+    href: 'http://halo.xiranya.cn/rss.xml',
+    url: 'http://halo.xiranya.cn/rss.xml',
+    type: 'external',
+    description: '订阅博客更新，通过 RSS 阅读器获取最新文章。',
   },
 ]
 

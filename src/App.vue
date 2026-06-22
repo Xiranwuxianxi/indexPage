@@ -4,11 +4,13 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 
 import { siteNavigationLinks } from './config/seo'
+import { useTheme } from './composables/useTheme'
 import { useSiteStore } from './stores/site'
 
 const route = useRoute()
 const site = useSiteStore()
 const { socialLinks } = storeToRefs(site)
+const { isDark, toggleTheme } = useTheme()
 
 const navItems = siteNavigationLinks.filter((link) => link.type === 'router')
 const footerSiteLinks = siteNavigationLinks
@@ -63,10 +65,24 @@ onUnmounted(() => {
       </RouterLink>
 
       <nav class="nav-links" aria-label="主导航">
-        <RouterLink v-for="item in navItems" :key="item.id" :to="item.href">
+        <RouterLink
+          v-for="item in navItems"
+          :key="item.id"
+          :to="item.href"
+          :aria-current="route.name === item.id ? 'page' : undefined"
+        >
           {{ item.navLabel }}
         </RouterLink>
       </nav>
+
+      <button
+        class="theme-toggle"
+        type="button"
+        :aria-label="isDark ? '切换到浅色模式' : '切换到深色模式'"
+        @click="toggleTheme"
+      >
+        <span aria-hidden="true">{{ isDark ? '☀️' : '🌙' }}</span>
+      </button>
     </header>
 
     <RouterView v-slot="{ Component, route: currentRoute }">
@@ -106,3 +122,44 @@ onUnmounted(() => {
     </footer>
   </div>
 </template>
+
+<style scoped>
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(34, 116, 165, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    background 0.2s var(--ease-out);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 184, 255, 0.22);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+html.dark .theme-toggle {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 184, 255, 0.2);
+}
+
+html.dark .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(0, 184, 255, 0.32);
+  outline-offset: 3px;
+}
+</style>

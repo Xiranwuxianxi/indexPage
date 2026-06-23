@@ -8,7 +8,7 @@ import { siteBaseUrl, siteNavigationLinks } from '../src/config/seo.js'
 const now = new Date().toISOString().split('T')[0]
 
 const sitemapEntries = siteNavigationLinks
-  .filter((link) => link.type === 'router')
+  .filter((link) => link.url.startsWith(siteBaseUrl))
   .map((link) => {
     const isHome = link.url === `${siteBaseUrl}/`
 

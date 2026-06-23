@@ -34,7 +34,7 @@ const handleCardLeave = (event) => {
     <section class="hero-panel" aria-labelledby="site-title">
       <div class="hero-copy">
         <p class="eyebrow reveal reveal-1">XIRAN DIGITAL LAB</p>
-        <h1 id="site-title" class="hero-title reveal reveal-2">希燃呐</h1>
+        <h1 id="site-title" class="hero-title reveal reveal-2">希燃呀</h1>
         <p class="intro reveal reveal-3">
           探索底层逻辑，用代码重构世界。这里收纳在线工具、日记、博客、开源项目，也放着你值得关注的内容平台。
         </p>
@@ -42,7 +42,7 @@ const handleCardLeave = (event) => {
         <div class="hero-actions reveal reveal-4" aria-label="主要入口">
           <RouterLink class="action primary" to="/projects">浏览项目索引</RouterLink>
           <RouterLink class="action secondary" to="/about">
-            关于希燃呐
+            关于希燃呀
           </RouterLink>
         </div>
 
@@ -59,7 +59,7 @@ const handleCardLeave = (event) => {
           <div class="avatar-frame">
             <img
               :src="avatarUrl"
-              alt="希燃呐的头像"
+              alt="希燃呀的头像"
               width="116"
               height="116"
               loading="eager"

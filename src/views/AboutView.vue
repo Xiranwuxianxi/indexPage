@@ -46,7 +46,7 @@ const { focusAreas, milestones, socialLinks, timeline } = storeToRefs(site)
             </a>
             <a
               class="action secondary"
-              href="http://halo.xiranya.cn/"
+              href="https://halo.xiranya.cn/"
               target="_blank"
               rel="noreferrer"
             >

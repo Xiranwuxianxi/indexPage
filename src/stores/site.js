@@ -63,7 +63,7 @@ export const useSiteStore = defineStore('site', {
       {
         id: 'blog',
         name: '博客小栈',
-        href: 'http://halo.xiranya.cn/',
+        href: 'https://halo.xiranya.cn/',
         type: '文章',
         status: 'Blog Active',
         icon: '📚',

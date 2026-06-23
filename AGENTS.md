@@ -6,7 +6,7 @@
 
 ## 项目概述
 
-**希燃呐数字研发实验场**（项目名 `indexpage`）是一个基于 **Vue 3 + Vite** 的中文个人主页/数字门户站点，部署在 `http://xiranya.cn/`。
+**希燃呀数字研发实验场**（项目名 `indexpage`）是一个基于 **Vue 3 + Vite** 的中文个人主页/数字门户站点，部署在 `https://xiranya.cn/`。
 
 站点聚合了作者的多个数字入口：C-Sandbox 在线 C 语言编译、日记空间、Halo 技术博客、Gitee/GitHub 开源主页，以及 B 站、抖音等社交媒体链接。
 

@@ -66,9 +66,9 @@
   path: '/projects',
   name: 'projects',
   meta: {
-    title: '项目索引 | 希燃呐',
-    description: '集中浏览希燃呐的在线工具、日记空间、技术博客和开源项目入口。',
-    canonical: 'http://xiranya.cn/projects/',
+    title: '项目索引 | 希燃呀',
+    description: '集中浏览希燃呀的在线工具、日记空间、技术博客和开源项目入口。',
+    canonical: 'https://xiranya.cn/projects/',
   },
 }
 ```
@@ -82,7 +82,7 @@
 本项目为了提高出现站点链接的概率，做了这些信号：
 
 - 页头主导航保持清晰：首页、项目、关于。
-- 页脚提供完整站点入口：首页、项目索引、关于希燃呐、C-Sandbox、日记空间、技术博客。
+- 页脚提供完整站点入口：首页、项目索引、关于希燃呀、C-Sandbox、日记空间、技术博客。
 - JSON-LD 使用 `WebSite`、`WebPage`、`BreadcrumbList`、`ItemList`、`SiteNavigationElement` 描述核心入口。
 - sitemap 中列出重要公开页面。
 - `/projects/`、`/about/` 打包后有独立静态 HTML。

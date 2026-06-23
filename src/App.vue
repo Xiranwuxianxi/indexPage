@@ -59,7 +59,7 @@ onUnmounted(() => {
       <RouterLink class="brand" to="/" aria-label="回到首页">
         <span class="brand-mark">希</span>
         <span class="brand-copy">
-          <strong>希燃呐</strong>
+          <strong>希燃呀</strong>
           <small>Digital Lab</small>
         </span>
       </RouterLink>
@@ -93,7 +93,7 @@ onUnmounted(() => {
 
     <footer class="site-footer">
       <div class="footer-copy">
-        <strong>希燃呐数字研发实验场</strong>
+        <strong>希燃呀数字研发实验场</strong>
         <span>工具、日记、博客、开源项目和个人平台入口。</span>
       </div>
 

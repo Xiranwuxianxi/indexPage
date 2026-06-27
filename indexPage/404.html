@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="当前页面不存在或已被移动，返回希燃呀的数字研发实验场继续探索。"
+    />
+    <meta name="robots" content="noindex,follow" />
+    <link rel="canonical" href="https://xiranya.cn/" />
+    <title>页面已离线 | 希燃呀</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: #17211b;
+        background:
+          linear-gradient(90deg, rgba(23, 33, 27, 0.06) 1px, transparent 1px),
+          linear-gradient(0deg, rgba(23, 33, 27, 0.06) 1px, transparent 1px),
+          linear-gradient(135deg, #f7faf8 0%, #eef6fb 48%, #f8f3ee 100%);
+        background-size:
+          42px 42px,
+          42px 42px,
+          auto;
+        font-family:
+          Inter,
+          'Microsoft YaHei',
+          'PingFang SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        letter-spacing: 0;
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        content: '';
+        background: repeating-linear-gradient(
+          135deg,
+          transparent 0,
+          transparent 22px,
+          rgba(18, 166, 106, 0.05) 23px,
+          rgba(18, 166, 106, 0.05) 24px
+        );
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        padding: clamp(16px, 4vw, 48px);
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+        width: min(1120px, 100%);
+        min-height: min(720px, calc(100vh - 64px));
+        border: 1px solid rgba(23, 33, 27, 0.12);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 24px 80px rgba(36, 57, 48, 0.14);
+        overflow: hidden;
+      }
+
+      .copy,
+      .visual {
+        position: relative;
+        padding: clamp(28px, 6vw, 68px);
+      }
+
+      .copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .copy::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 7px;
+        content: '';
+        background: linear-gradient(90deg, #12a66a, #c49a2f, #e96f4c, #0b8faa);
+      }
+
+      .eyebrow {
+        margin: 0 0 16px;
+        color: #0b8faa;
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        color: #17211b;
+        font-size: clamp(3.8rem, 11vw, 8.5rem);
+        font-weight: 950;
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 620px;
+        margin: 28px 0 0;
+        color: #60706a;
+        font-size: clamp(1rem, 2vw, 1.22rem);
+        line-height: 1.9;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 36px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 22px;
+        border-radius: 8px;
+        font-weight: 900;
+        text-decoration: none;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+      }
+
+      .button:focus-visible {
+        outline: 3px solid rgba(11, 143, 170, 0.35);
+        outline-offset: 3px;
+      }
+
+      .primary {
+        color: #ffffff;
+        background: #17211b;
+        box-shadow: 0 14px 32px rgba(23, 33, 27, 0.2);
+      }
+
+      .secondary {
+        color: #17211b;
+        border: 1px solid rgba(23, 33, 27, 0.18);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .status-list {
+        display: grid;
+        gap: 10px;
+        max-width: 520px;
+        margin-top: 48px;
+      }
+
+      .status-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 16px;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 12px;
+        border: 1px solid rgba(23, 33, 27, 0.12);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .status-row span:first-child {
+        color: #17211b;
+        font-weight: 900;
+      }
+
+      .status-row span:last-child {
+        color: #60706a;
+        font-size: 0.94rem;
+      }
+
+      .visual {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px solid rgba(23, 33, 27, 0.1);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(239, 247, 242, 0.8)),
+          linear-gradient(90deg, rgba(18, 166, 106, 0.06) 1px, transparent 1px);
+        background-size:
+          auto,
+          28px 28px;
+      }
+
+      .route-card {
+        width: min(420px, 100%);
+        padding: 24px;
+        border: 1px solid rgba(23, 33, 27, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .route-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid rgba(23, 33, 27, 0.12);
+      }
+
+      .route-top strong {
+        font-size: 4.8rem;
+        font-weight: 950;
+        line-height: 1;
+      }
+
+      .route-top span {
+        color: #e96f4c;
+        font-size: 0.86rem;
+        font-weight: 900;
+      }
+
+      .route-map {
+        position: relative;
+        height: 220px;
+        margin-top: 20px;
+      }
+
+      .node,
+      .line {
+        position: absolute;
+        display: block;
+      }
+
+      .node {
+        width: 16px;
+        height: 16px;
+        border: 3px solid #17211b;
+        border-radius: 999px;
+        background: #ffffff;
+      }
+
+      .node.start {
+        top: 98px;
+        left: 0;
+      }
+
+      .node.end-a {
+        top: 28px;
+        right: 0;
+        border-color: #12a66a;
+      }
+
+      .node.end-b {
+        top: 102px;
+        right: 0;
+        border-color: #e96f4c;
+      }
+
+      .node.end-c {
+        right: 0;
+        bottom: 26px;
+        border-color: #0b8faa;
+      }
+
+      .line {
+        left: 24px;
+        right: 24px;
+        height: 2px;
+        background: linear-gradient(90deg, #17211b 0%, rgba(23, 33, 27, 0.04) 72%);
+        transform-origin: left center;
+      }
+
+      .line.a {
+        top: 106px;
+        transform: rotate(-17deg);
+      }
+
+      .line.b {
+        top: 110px;
+        background: repeating-linear-gradient(
+          90deg,
+          #e96f4c 0,
+          #e96f4c 10px,
+          transparent 10px,
+          transparent 18px
+        );
+      }
+
+      .line.c {
+        top: 114px;
+        transform: rotate(17deg);
+      }
+
+      .console {
+        display: grid;
+        gap: 9px;
+        margin-top: 4px;
+      }
+
+      .console span {
+        min-height: 34px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        color: #60706a;
+        background: rgba(23, 33, 27, 0.05);
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      @media (max-width: 860px) {
+        .shell {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+
+        .visual {
+          border-top: 1px solid rgba(23, 33, 27, 0.1);
+          border-left: 0;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          padding: 12px;
+        }
+
+        .copy,
+        .visual {
+          padding: 28px 18px;
+        }
+
+        h1 {
+          font-size: clamp(3.4rem, 22vw, 5.6rem);
+        }
+
+        .status-row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+          padding: 10px 12px;
+        }
+
+        .route-top strong {
+          font-size: 3.8rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="shell" aria-labelledby="title">
+        <div class="copy">
+          <p class="eyebrow">404 / LINK OFFLINE</p>
+          <h1 id="title">页面已离线</h1>
+          <p class="lead">
+            你访问的地址暂时不存在，可能是链接写错了，也可能是页面已经被移动或删除。先回到希燃呀的数字研发实验场，继续探索工具、文章与开源项目。
+          </p>
+
+          <div class="actions" aria-label="页面操作">
+            <a class="button primary" href="https://xiranya.cn/">返回主站首页</a>
+            <a class="button secondary" href="javascript:history.back()">返回上一页</a>
+          </div>
+
+          <div class="status-list" aria-label="排查状态">
+            <div class="status-row">
+              <span>Route</span>
+              <span>没有匹配到可访问页面</span>
+            </div>
+            <div class="status-row">
+              <span>Hint</span>
+              <span>可以从首页重新进入 C-Sandbox、博客或开源主页</span>
+            </div>
+            <div class="status-row">
+              <span>Owner</span>
+              <span>希燃呀，探索底层逻辑，用代码重构世界</span>
+            </div>
+          </div>
+        </div>
+
+        <figure class="visual" aria-label="失效路线示意">
+          <div class="route-card">
+            <div class="route-top">
+              <strong>404</strong>
+              <span>Signal Missing</span>
+            </div>
+
+            <div class="route-map" aria-hidden="true">
+              <span class="node start"></span>
+              <span class="line a"></span>
+              <span class="line b"></span>
+              <span class="line c"></span>
+              <span class="node end-a"></span>
+              <span class="node end-b"></span>
+              <span class="node end-c"></span>
+            </div>
+
+            <div class="console" aria-hidden="true">
+              <span>GET /unknown-route</span>
+              <span>resolve: no matching resource</span>
+              <span>next: return to index</span>
+            </div>
+          </div>
+        </figure>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+package com.xiran.platform.article.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.xiran.platform.common.entity.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * 分类实体
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("category")
+public class Category extends BaseEntity {
+
+    @TableField("name")
+    private String name;
+
+    @TableField("slug")
+    private String slug;
+
+    @TableField("description")
+    private String description;
+
+    @TableField("type")
+    private String type;
+}

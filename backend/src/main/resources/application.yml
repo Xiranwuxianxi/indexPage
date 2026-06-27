@@ -1,0 +1,44 @@
+﻿spring:
+  application:
+    name: xiran-platform
+
+  profiles:
+    active: dev
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# 自定义配置
+xiran:
+  jwt:
+    secret: ${XIRAN_JWT_SECRET:}
+    access-token-expiration: ${XIRAN_ACCESS_TOKEN_EXPIRATION:3600000}
+    refresh-token-expiration: ${XIRAN_REFRESH_TOKEN_EXPIRATION:604800000}
+  cors:
+    allowed-origins: ${XIRAN_CORS_ALLOWED_ORIGINS:*}
+
+# SpringDoc / Swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+
+# MyBatis Plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0

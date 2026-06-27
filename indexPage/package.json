@@ -1,0 +1,35 @@
+{
+  "name": "indexpage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "prebuild": "npm run sitemap",
+    "build": "vite build",
+    "postbuild": "node scripts/write-seo-pages.mjs",
+    "preview": "vite preview",
+    "format": "prettier --write --experimental-cli src/",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "pinia": "^3.0.4",
+    "sitemap": "^9.0.1",
+    "vue": "^3.5.30",
+    "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "eslint": "^9.39.4",
+    "eslint-plugin-vue": "^10.9.2",
+    "prettier": "3.8.1",
+    "vite": "^7.3.1",
+    "vite-plugin-vue-devtools": "^8.0.7"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

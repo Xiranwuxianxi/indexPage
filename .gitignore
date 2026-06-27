@@ -1,0 +1,50 @@
+﻿# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Backend - Java / Maven
+backend/target/
+backend/*.jar
+backend/*.war
+backend/*.ear
+
+# Frontend - Node.js
+indexPage/node_modules/
+indexPage/.npm-cache/
+indexPage/dist/
+indexPage/dist-seo-check/
+indexPage/.env
+indexPage/.env.local
+indexPage/.env.*.local
+
+# Testing
+indexPage/cypress/videos/
+indexPage/cypress/screenshots/
+
+# Misc
+*.tmp
+*.temp
+.cache/
+
+# Agent / local metadata
+.claude/
+.agents/
+.codebuddy/
+.workbuddy/

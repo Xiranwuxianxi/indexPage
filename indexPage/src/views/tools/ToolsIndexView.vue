@@ -7,13 +7,18 @@ import ToolCard from '../../components/ToolCard.vue'
 import AppSkeleton from '../../components/common/AppSkeleton.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import ErrorMessage from '../../components/common/ErrorMessage.vue'
+import UtilitiesBoard from '../../components/widgets/UtilitiesBoard.vue'
 import { useToolStore } from '../../stores/tool'
+import { useWidgetStore } from '../../stores/widgets'
 
 const toolStore = useToolStore()
 const { tools, loading, error } = storeToRefs(toolStore)
+const widgetStore = useWidgetStore()
+const { utilities } = storeToRefs(widgetStore)
 
 onMounted(() => {
   toolStore.fetchTools()
+  widgetStore.fetchWidgets()
 })
 </script>
 
@@ -41,6 +46,13 @@ onMounted(() => {
         title="暂无工具"
         description="工具列表为空，请稍后再试。"
       />
+
+      <!-- 实用小工具：纯前端即时可用 -->
+      <div class="utilities-block">
+        <h2 class="utilities-title">实用小工具</h2>
+        <p class="utilities-lead">无需跳转，点击卡片即可展开使用。</p>
+        <UtilitiesBoard :utilities="utilities" :loading="widgetStore.loading" />
+      </div>
     </section>
   </main>
 </template>
@@ -51,6 +63,21 @@ onMounted(() => {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-top: 28px;
+}
+
+.utilities-block {
+  margin-top: clamp(40px, 6vw, 64px);
+}
+
+.utilities-title {
+  font-size: 1.5rem;
+  font-weight: 950;
+}
+
+.utilities-lead {
+  margin: 8px 0 18px;
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
 @media (max-width: 1100px) {

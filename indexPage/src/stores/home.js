@@ -26,6 +26,7 @@ export const useHomeStore = defineStore('home', {
     featuredProjects: [],
     latestArticles: [],
     focusAreas: [],
+    stats: null,
     loading: false,
     error: null,
   }),
@@ -41,6 +42,7 @@ export const useHomeStore = defineStore('home', {
         this.featuredProjects = data.featuredProjects || []
         this.latestArticles = data.latestArticles || []
         this.focusAreas = data.focusAreas || []
+        this.stats = data.stats || null
       } catch (err) {
         this.error = err.message || '加载首页数据失败'
       } finally {

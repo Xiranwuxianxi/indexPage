@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import api from '../api/client.js'
 
 /**
@@ -22,7 +22,7 @@ export const useArticleStore = defineStore('article', {
       this.error = null
       try {
         const data = await api.getArticles(params)
-        this.articles = data.list || []
+        this.articles = data.records || data.list || []
       } catch (err) {
         this.error = err.message || '加载文章失败'
         this.articles = []

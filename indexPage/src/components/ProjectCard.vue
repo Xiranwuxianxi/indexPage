@@ -62,11 +62,11 @@ const cardClasses = computed(() => {
   min-height: 300px;
   padding: 22px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   color: var(--ink);
   background: var(--paper);
   text-decoration: none;
-  box-shadow: 0 16px 40px rgba(63, 112, 153, 0.1);
+  box-shadow: 0 10px 30px rgba(var(--brand-rgb), 0.06);
   transition:
     transform 0.35s var(--ease-out),
     border-color 0.35s var(--ease-out),
@@ -81,7 +81,7 @@ const cardClasses = computed(() => {
   content: '';
   background: radial-gradient(
     circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(0, 184, 255, 0.12),
+    rgba(var(--brand-rgb), 0.12),
     transparent 50%
   );
   opacity: 0;
@@ -101,23 +101,23 @@ const cardClasses = computed(() => {
 }
 
 html.dark .project-icon {
-  background: rgba(0, 184, 255, 0.14);
+  background: rgba(var(--brand-rgb), 0.14);
 }
 
 html.dark .project-type {
-  border-color: rgba(0, 184, 255, 0.35);
+  border-color: rgba(var(--brand-rgb), 0.35);
   color: #4fd1ff;
-  background: rgba(0, 184, 255, 0.12);
+  background: rgba(var(--brand-rgb), 0.12);
 }
 
 html.dark .project-tags li {
-  background: rgba(0, 184, 255, 0.12);
+  background: rgba(var(--brand-rgb), 0.12);
 }
 
 html.dark .project-card::before {
   background: radial-gradient(
     circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(0, 184, 255, 0.18),
+    rgba(var(--brand-rgb), 0.18),
     transparent 50%
   );
 }
@@ -130,7 +130,7 @@ html.dark .project-card::before {
   height: 40px;
   margin-bottom: 12px;
   border-radius: 10px;
-  background: rgba(0, 184, 255, 0.08);
+  background: rgba(var(--brand-rgb), 0.08);
   font-size: 1.35rem;
   line-height: 1;
 }
@@ -138,10 +138,10 @@ html.dark .project-card::before {
 .project-type {
   align-self: flex-start;
   padding: 5px 10px;
-  border: 1px solid rgba(0, 184, 255, 0.26);
+  border: 1px solid rgba(var(--brand-rgb), 0.26);
   border-radius: 8px;
-  color: #0078b4;
-  background: rgba(0, 184, 255, 0.07);
+  color: var(--brand);
+  background: rgba(var(--brand-rgb), 0.07);
   font-size: 0.74rem;
   font-weight: 950;
 }
@@ -174,7 +174,7 @@ html.dark .project-card::before {
   padding: 4px 10px;
   border-radius: 6px;
   color: var(--soft);
-  background: rgba(0, 184, 255, 0.07);
+  background: rgba(var(--brand-rgb), 0.07);
   font-size: 0.74rem;
   font-weight: 800;
 }

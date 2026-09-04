@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -53,7 +54,9 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/home", "/api/v1/tools/**", "/api/v1/errors/**",
-                                "/api/v1/articles/**", "/api/v1/projects/**", "/api/v1/search/**", "/api/v1/tutorials/**").permitAll()
+                                "/api/v1/articles/**", "/api/v1/projects/**", "/api/v1/search/**", "/api/v1/tutorials/**",
+                                "/api/v1/widgets/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/tools/*/exec").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "EDITOR")
                         .requestMatchers("/api/v1/user/**").authenticated()
                         .anyRequest().authenticated()

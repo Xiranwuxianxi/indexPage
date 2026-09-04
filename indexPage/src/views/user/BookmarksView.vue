@@ -87,8 +87,8 @@ onMounted(async () => {
 .item-type {
   padding: 3px 8px;
   border-radius: 6px;
-  color: #0078b4;
-  background: rgba(0, 184, 255, 0.08);
+  color: var(--brand);
+  background: rgba(var(--brand-rgb), 0.08);
   font-size: 0.72rem;
   font-weight: 950;
   text-transform: uppercase;

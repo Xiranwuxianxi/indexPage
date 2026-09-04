@@ -135,12 +135,12 @@ CREATE TABLE IF NOT EXISTS `project` (
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted` TINYINT(1) NOT NULL DEFAULT 0,
-    `status_flag` TINYINT(1) NOT NULL DEFAULT 1,
+    `status` TINYINT(1) NOT NULL DEFAULT 1,
     `sort_order` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_project_slug` (`slug`),
     KEY `idx_project_type` (`type`),
-    KEY `idx_project_status` (`status`)
+    KEY `idx_project_status` (`project_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='项目表';
 
 CREATE TABLE IF NOT EXISTS `project_tag` (

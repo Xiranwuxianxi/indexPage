@@ -96,7 +96,7 @@ onMounted(async () => {
 }
 
 .tutorial-card.is-active {
-  background: rgba(0, 184, 255, 0.06);
+  background: rgba(var(--brand-rgb), 0.06);
 }
 
 .tutorial-card strong {

@@ -98,6 +98,16 @@ export const siteNavigationLinks = [
     type: 'external',
     description: '基于 Halo 构建的个人技术博客。',
   },
+  {
+    id: 'myblogs',
+    label: '简单博客',
+    navLabel: '博客',
+    href: `${siteBaseUrl}/myblogs/`,
+    url: `${siteBaseUrl}/myblogs/`,
+    type: 'external',
+    showInNav: true,
+    description: '随手写日记、记录想法和沉淀生活片段的简单博客。',
+  },
 ]
 
 /**
@@ -183,6 +193,14 @@ export const routeSeoMap = {
     description: '使用 GitHub 或邮箱登录希燃呀开发者平台，收藏文章、保存配置、管理个人中心。',
     keywords: '登录,GitHub登录,开发者平台',
     canonical: `${siteBaseUrl}/login/`,
+    robots: 'noindex,nofollow',
+  },
+  register: {
+    routeName: 'register',
+    title: '注册 | 希燃呀开发者平台',
+    description: '注册希燃呀开发者平台账号，收藏文章、保存配置、管理个人中心。',
+    keywords: '注册,账号注册,开发者平台',
+    canonical: `${siteBaseUrl}/register/`,
     robots: 'noindex,nofollow',
   },
   user: {

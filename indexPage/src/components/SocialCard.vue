@@ -68,8 +68,8 @@ defineProps({
 }
 
 .social-card.is-cyan {
-  border-color: rgba(0, 184, 255, 0.38);
-  box-shadow: 0 14px 36px rgba(0, 184, 255, 0.12);
+  border-color: rgba(var(--brand-rgb), 0.38);
+  box-shadow: 0 14px 36px rgba(var(--brand-rgb), 0.12);
 }
 
 .social-card.is-pink {
@@ -88,7 +88,7 @@ defineProps({
 }
 
 .social-card:hover.is-cyan {
-  box-shadow: 0 20px 48px rgba(0, 184, 255, 0.18);
+  box-shadow: 0 20px 48px rgba(var(--brand-rgb), 0.18);
 }
 
 .social-card:hover.is-pink {

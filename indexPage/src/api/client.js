@@ -8,7 +8,9 @@
 import { ENDPOINTS } from './endpoints.js'
 
 const useMock = import.meta.env.VITE_USE_MOCK === 'true'
-const baseURL = import.meta.env.VITE_API_BASE_URL || '/api/v1'
+// baseURL 仅为源（origin），如 http://localhost:8080；端点路径已包含 /api/v1 前缀，
+// 默认为空字符串时走 Vite dev 代理（/api -> http://localhost:8080）。
+const baseURL = import.meta.env.VITE_API_BASE_URL || ''
 
 const TOKEN_KEY = 'xiran_token'
 
@@ -22,7 +24,7 @@ function removeToken() {
 }
 
 function dispatchUnauthorized() {
-  window.dispatchEvent(new CustomEvent('xiran:unauthorized'))
+  window.dispatchEvent(new window.CustomEvent('xiran:unauthorized'))
 }
 
 const wrapResponse = async (response) => {
@@ -36,25 +38,36 @@ const wrapResponse = async (response) => {
   return body.data
 }
 
-const request = async (url, options = {}) => {
+const fetchWithToken = async (url, options = {}, withToken = true) => {
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   }
 
-  const token = getToken()
+  const token = withToken ? getToken() : null
   if (token) {
     headers.Authorization = `Bearer ${token}`
   }
 
-  const response = await fetch(`${baseURL}${url}`, {
+  return fetch(`${baseURL}${url}`, {
     ...options,
     headers,
     body: options.body ? JSON.stringify(options.body) : undefined,
   })
+}
+
+const request = async (url, options = {}) => {
+  let response = await fetchWithToken(url, options, true)
+
+  // 若携带 token 返回 401，可能是 token 过期/失效或后端密钥缺失。
+  // 对公开接口，去掉 token 重试一次即可正常访问；受保护接口会再次 401，
+  // 由路由守卫/调用方处理跳转。
+  if (response.status === 401 && getToken()) {
+    removeToken()
+    response = await fetchWithToken(url, options, false)
+  }
 
   if (response.status === 401) {
-    removeToken()
     dispatchUnauthorized()
     const err = new Error('Session expired, please login again')
     err.code = 401
@@ -102,13 +115,32 @@ const realApi = {
 
   getTutorials: () => request(ENDPOINTS.TUTORIALS),
 
+  getWidgets: () => request(ENDPOINTS.WIDGETS),
+  getWorldClock: () => request(ENDPOINTS.WORLD_CLOCK),
+  getWeather: (city) => request(ENDPOINTS.WEATHER(city)),
+  getMarkets: () => request(ENDPOINTS.MARKETS),
+
   login: (credentials) => request(ENDPOINTS.AUTH_LOGIN, { method: 'POST', body: credentials }),
+  register: (data) => request(ENDPOINTS.AUTH_REGISTER, { method: 'POST', body: data }),
   getMe: () => request(ENDPOINTS.USER_ME),
   logout: () => request(ENDPOINTS.AUTH_LOGOUT, { method: 'POST' }),
 
   getBookmarks: () => request(ENDPOINTS.USER_BOOKMARKS),
   getHistory: () => request(ENDPOINTS.USER_HISTORY),
   getSavedConfigs: () => request(ENDPOINTS.USER_SAVED_CONFIGS),
+
+  // Admin（管理后台）
+  getAdminTools: (params = {}) =>
+    request(`${ENDPOINTS.ADMIN_TOOLS}?${new URLSearchParams(params)}`),
+  createTool: (data) => request(ENDPOINTS.ADMIN_TOOLS, { method: 'POST', body: data }),
+  updateTool: (id, data) => request(ENDPOINTS.ADMIN_TOOL(id), { method: 'PUT', body: data }),
+  deleteTool: (id) => request(ENDPOINTS.ADMIN_TOOL(id), { method: 'DELETE' }),
+
+  getAdminProjects: (params = {}) =>
+    request(`${ENDPOINTS.ADMIN_PROJECTS}?${new URLSearchParams(params)}`),
+  createProject: (data) => request(ENDPOINTS.ADMIN_PROJECTS, { method: 'POST', body: data }),
+  updateProject: (id, data) => request(ENDPOINTS.ADMIN_PROJECT(id), { method: 'PUT', body: data }),
+  deleteProject: (id) => request(ENDPOINTS.ADMIN_PROJECT(id), { method: 'DELETE' }),
 }
 
 const mockApiWrapper = {
@@ -125,7 +157,11 @@ const mockApiWrapper = {
   search: (params) => mockCall('search', params),
   getHotSearches: () => mockCall('getHotSearches'),
   getTutorials: () => Promise.resolve([]),
+  getWidgets: () => mockCall('getWidgets'),
+  getWorldClock: () => mockCall('getWorldClock'),
+  getWeather: (city) => mockCall('getWeather', city),
   login: (credentials) => mockCall('login', credentials),
+  register: (data) => mockCall('register', data),
   getMe: () => mockCall('getMe'),
   logout: () => mockCall('logout'),
   getBookmarks: () => mockCall('getBookmarks'),

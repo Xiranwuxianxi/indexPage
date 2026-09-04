@@ -84,8 +84,8 @@ onMounted(() => {
 .article-category {
   padding: 4px 10px;
   border-radius: 6px;
-  color: #0078b4;
-  background: rgba(0, 184, 255, 0.08);
+  color: var(--brand);
+  background: rgba(var(--brand-rgb), 0.08);
   font-weight: 950;
 }
 

@@ -321,8 +321,8 @@ const optionHints = {
 }
 
 .form-group input:focus {
-  outline: 3px solid rgba(0, 184, 255, 0.2);
-  border-color: rgba(0, 184, 255, 0.4);
+  outline: 3px solid rgba(var(--brand-rgb), 0.2);
+  border-color: rgba(var(--brand-rgb), 0.4);
 }
 
 .form-group input:disabled {

@@ -19,6 +19,11 @@ onMounted(() => {
 
 const toolComponentMap = {
   'nginx-generator': defineAsyncComponent(() => import('./NginxGeneratorForm.vue')),
+  'nginx-checker': defineAsyncComponent(() => import('./NginxChecker.vue')),
+  'jwt-parser': defineAsyncComponent(() => import('./JwtParser.vue')),
+  'cors-generator': defineAsyncComponent(() => import('./CorsGenerator.vue')),
+  'cron-generator': defineAsyncComponent(() => import('./CronGenerator.vue')),
+  'sitemap-checker': defineAsyncComponent(() => import('./SitemapChecker.vue')),
 }
 
 const activeTool = computed(() => toolComponentMap[slug.value])

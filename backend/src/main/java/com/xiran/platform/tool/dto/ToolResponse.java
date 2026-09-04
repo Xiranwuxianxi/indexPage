@@ -17,4 +17,7 @@ public class ToolResponse {
     private LocalDateTime updatedAt;
     private String href;
     private List<String> tags;
+
+    /** 发布状态：1 发布，0 下线，2 草稿（管理后台编辑用） */
+    private Integer publishStatus;
 }

@@ -296,6 +296,60 @@ const buildPageResponse = (list, page = 1, size = 10) => ({
   pages: Math.ceil(list.length / size),
 })
 
+// 平台入口 -> 对应后端接口：GET /api/v1/widgets
+export const mockPlatforms = [
+  {
+    key: 'csandbox',
+    name: '代码运行平台',
+    subtitle: 'C-Sandbox',
+    description: '轻量级 C 语言在线编译环境，打开即写，适合快速验证想法、调试片段和记录实验结果。',
+    href: 'https://xiranya.cn/csandbox/',
+    icon: '⚡',
+  },
+  {
+    key: 'halo',
+    name: 'Halo 博客',
+    subtitle: '技术博客',
+    description: '基于 Halo 构建的个人技术博客，记录编译器、前后端工程、系统优化和持续学习的过程。',
+    href: 'https://halo.xiranya.cn/',
+    icon: '📚',
+  },
+  {
+    key: 'myblogs',
+    name: '简单博客',
+    subtitle: '随笔小站',
+    description: '一个可以随手写日记、记录想法和沉淀生活片段的私人写作空间。',
+    href: 'https://xiranya.cn/myblogs/',
+    icon: '✍️',
+  },
+]
+
+// 实用工具 -> 对应后端接口：GET /api/v1/widgets
+export const mockUtilities = [
+  { key: 'timestamp', name: '时间戳转换', description: 'Unix 时间戳与日期时间互转', icon: '⏱️' },
+  { key: 'base64', name: 'Base64 编解码', description: '文本与 Base64 字符串互转', icon: '🔤' },
+  { key: 'json', name: 'JSON 格式化', description: '压缩 JSON 美化排版并校验合法性', icon: '🧩' },
+  { key: 'password', name: '随机密码', description: '一键生成高强度随机密码', icon: '🔑' },
+  { key: 'color', name: '颜色转换', description: 'HEX / RGB / HSL 颜色格式互转', icon: '🎨' },
+]
+
+// 世界时间 -> 对应后端接口：GET /api/v1/widgets/world-clock
+export const mockWorldClock = {
+  updatedAt: Date.now(),
+  cities: [
+    { key: 'beijing', city: '北京', country: '中国', timezone: 'Asia/Shanghai', localTime: '2026-08-30 20:15:00', utcOffset: '+08:00' },
+    { key: 'london', city: '伦敦', country: '英国', timezone: 'Europe/London', localTime: '2026-08-30 13:15:00', utcOffset: '+01:00' },
+    { key: 'newyork', city: '纽约', country: '美国', timezone: 'America/New_York', localTime: '2026-08-30 08:15:00', utcOffset: '-04:00' },
+  ],
+}
+
+// 天气 -> 对应后端接口：GET /api/v1/widgets/weather?city=
+export const mockWeather = {
+  beijing: { city: 'beijing', cityName: '北京', country: '中国', temperature: 26.0, unit: '°C', weatherCode: 0, description: '晴', icon: '☀️', windSpeed: 8.0, source: 'mock', observedAt: '2026-08-30 20:00:00' },
+  london: { city: 'london', cityName: '伦敦', country: '英国', temperature: 15.0, unit: '°C', weatherCode: 2, description: '局部多云', icon: '⛅', windSpeed: 12.0, source: 'mock', observedAt: '2026-08-30 20:00:00' },
+  newyork: { city: 'newyork', cityName: '纽约', country: '美国', temperature: 22.0, unit: '°C', weatherCode: 1, description: '基本晴朗', icon: '🌤️', windSpeed: 10.0, source: 'mock', observedAt: '2026-08-30 20:00:00' },
+}
+
 /**
  * Mock API 客户端
  * 每个方法返回 Promise，结构与后端统一响应格式一致。
@@ -380,6 +434,22 @@ export const mockApi = {
   getHotSearches: () =>
     Promise.resolve({ code: 200, message: 'success', data: mockHotSearches }),
 
+  // 首页小组件
+  getWidgets: () =>
+    Promise.resolve({
+      code: 200,
+      message: 'success',
+      data: { platforms: mockPlatforms, utilities: mockUtilities },
+    }),
+  getWorldClock: () =>
+    Promise.resolve({ code: 200, message: 'success', data: mockWorldClock }),
+  getWeather: (city) =>
+    Promise.resolve({
+      code: 200,
+      message: 'success',
+      data: mockWeather[city] || mockWeather.beijing,
+    }),
+
   // 认证
   login: () =>
     Promise.resolve({
@@ -388,8 +458,25 @@ export const mockApi = {
       data: {
         accessToken: 'mock_access_token',
         refreshToken: 'mock_refresh_token',
-        expiresIn: 3600,
+        expiresIn: 2592000,
         user: mockUser,
+      },
+    }),
+  register: (data) =>
+    Promise.resolve({
+      code: 200,
+      message: 'success',
+      data: {
+        accessToken: 'mock_access_token',
+        refreshToken: 'mock_refresh_token',
+        expiresIn: 2592000,
+        user: {
+          ...mockUser,
+          username: data.username,
+          email: data.email,
+          nickname: data.nickname || data.username,
+          role: 'USER',
+        },
       },
     }),
   getMe: () => Promise.resolve({ code: 200, message: 'success', data: mockUser }),

@@ -1,4 +1,7 @@
 ﻿spring:
+  config:
+    import: optional:file:.env[.properties]
+
   application:
     name: xiran-platform
 
@@ -18,8 +21,8 @@ server:
 xiran:
   jwt:
     secret: ${XIRAN_JWT_SECRET:}
-    access-token-expiration: ${XIRAN_ACCESS_TOKEN_EXPIRATION:3600000}
-    refresh-token-expiration: ${XIRAN_REFRESH_TOKEN_EXPIRATION:604800000}
+    access-token-expiration: ${XIRAN_ACCESS_TOKEN_EXPIRATION:2592000000}
+    refresh-token-expiration: ${XIRAN_REFRESH_TOKEN_EXPIRATION:5184000000}
   cors:
     allowed-origins: ${XIRAN_CORS_ALLOWED_ORIGINS:*}
 

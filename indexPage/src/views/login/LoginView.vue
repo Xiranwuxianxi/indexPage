@@ -1,12 +1,14 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import SectionHeading from '../../components/SectionHeading.vue'
 import ErrorMessage from '../../components/common/ErrorMessage.vue'
+import { RouterLink } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const email = ref('')
 const password = ref('')
@@ -14,7 +16,8 @@ const password = ref('')
 const handleLogin = async () => {
   await userStore.login({ email: email.value, password: password.value })
   if (userStore.isLoggedIn) {
-    router.push('/user')
+    const redirect = route.query.redirect
+    router.push(typeof redirect === 'string' && redirect.startsWith('/') ? redirect : '/user')
   }
 }
 
@@ -59,7 +62,10 @@ const handleGithubLogin = () => {
         <span aria-hidden="true">🐙</span> 使用 GitHub 登录
       </button>
 
-      <p class="login-hint">Phase 2 为演示登录，任意邮箱/密码均可进入用户中心。</p>
+      <p class="login-hint">
+        还没有账号？
+        <RouterLink class="switch-link" to="/register">立即注册</RouterLink>
+      </p>
     </section>
   </main>
 </template>
@@ -97,8 +103,8 @@ const handleGithubLogin = () => {
 }
 
 .form-group input:focus {
-  outline: 3px solid rgba(0, 184, 255, 0.2);
-  border-color: rgba(0, 184, 255, 0.4);
+  outline: 3px solid rgba(var(--brand-rgb), 0.25);
+  border-color: rgba(var(--brand-rgb), 0.5);
 }
 
 .divider {

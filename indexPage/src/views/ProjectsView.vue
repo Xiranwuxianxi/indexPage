@@ -1,16 +1,36 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import ProjectCard from '../components/ProjectCard.vue'
 import SectionHeading from '../components/SectionHeading.vue'
+import ProjectFormModal from '../components/admin/ProjectFormModal.vue'
 import AppSkeleton from '../components/common/AppSkeleton.vue'
 import EmptyState from '../components/common/EmptyState.vue'
 import ErrorMessage from '../components/common/ErrorMessage.vue'
+import api from '../api/client.js'
 import { useProjectStore } from '../stores/project'
+import { useUserStore } from '../stores/user'
 
 const projectStore = useProjectStore()
 const { filteredProjects, projectTypes, selectedType, loading, error } = storeToRefs(projectStore)
+const { isEditor } = storeToRefs(useUserStore())
+
+const showModal = ref(false)
+const saving = ref(false)
+
+async function handleCreate(payload) {
+  saving.value = true
+  try {
+    await api.createProject(payload)
+    showModal.value = false
+    await projectStore.fetchProjects()
+  } catch (err) {
+    window.alert(err.message || '保存失败')
+  } finally {
+    saving.value = false
+  }
+}
 
 onMounted(() => {
   projectStore.fetchProjects()
@@ -28,17 +48,28 @@ onMounted(() => {
         lead="这里集中整理工具、文章和开源入口。你可以按类型快速筛选，也可以直接进入对应站点继续探索。"
       />
 
-      <div class="filters" aria-label="项目类型筛选">
+      <div class="page-head-row">
+        <div class="filters" aria-label="项目类型筛选">
+          <button
+            v-for="type in projectTypes"
+            :key="type"
+            class="filter-button"
+            :class="{ 'is-active': selectedType === type }"
+            :aria-pressed="selectedType === type"
+            type="button"
+            @click="projectStore.setSelectedType(type)"
+          >
+            {{ type }}
+          </button>
+        </div>
+
         <button
-          v-for="type in projectTypes"
-          :key="type"
-          class="filter-button"
-          :class="{ 'is-active': selectedType === type }"
-          :aria-pressed="selectedType === type"
+          v-if="isEditor"
           type="button"
-          @click="projectStore.setSelectedType(type)"
+          class="action primary add-project-btn"
+          @click="showModal = true"
         >
-          {{ type }}
+          + 新增项目
         </button>
       </div>
 
@@ -77,16 +108,37 @@ onMounted(() => {
         title="没有匹配的项目"
         description="当前筛选条件下没有项目，尝试切换其他类型。"
       />
+
+      <ProjectFormModal
+        v-if="showModal"
+        :saving="saving"
+        @close="showModal = false"
+        @save="handleCreate"
+      />
     </section>
   </main>
 </template>
 
 <style scoped>
+.page-head-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 28px;
+}
+
+.add-project-btn {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 0.9rem;
 }
 
 .filter-button {
@@ -114,7 +166,7 @@ onMounted(() => {
   color: #ffffff;
   border-color: transparent;
   background: var(--cyan);
-  box-shadow: 0 10px 24px rgba(0, 184, 255, 0.22);
+  box-shadow: 0 10px 24px rgba(var(--brand-rgb), 0.22);
 }
 
 .project-board {

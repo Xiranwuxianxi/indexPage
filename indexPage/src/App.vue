@@ -1,6 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 
 import { siteNavigationLinks } from './config/seo'
@@ -12,51 +12,21 @@ const userStore = useUserStore()
 const { user, isLoggedIn } = storeToRefs(userStore)
 const { isDark, toggleTheme } = useTheme()
 
-const navItems = siteNavigationLinks.filter((link) => link.type === 'router')
+// 顶部导航：隐藏「文章」「错误」入口（文章统一由简单博客引导），保留简单博客外链
+const navItems = siteNavigationLinks.filter(
+  (link) =>
+    (link.type === 'router' && !['articles', 'errors'].includes(link.id)) || link.showInNav,
+)
 const footerSiteLinks = siteNavigationLinks
 
 const shellClass = computed(() => ({
   'is-error-page': route.name === 'not-found',
   'is-admin-page': route.path.startsWith('/admin'),
 }))
-
-const shellRef = ref(null)
-let rafId = null
-let pendingX = 0
-let pendingY = 0
-
-const updateCursorGlow = () => {
-  if (!shellRef.value) return
-  shellRef.value.style.setProperty('--cursor-x', `${pendingX}px`)
-  shellRef.value.style.setProperty('--cursor-y', `${pendingY}px`)
-  rafId = null
-}
-
-const handleMouseMove = (event) => {
-  pendingX = event.clientX
-  pendingY = event.clientY
-  if (rafId) return
-  rafId = requestAnimationFrame(updateCursorGlow)
-}
-
-onMounted(() => {
-  window.addEventListener('mousemove', handleMouseMove, { passive: true })
-  userStore.fetchProfile()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('mousemove', handleMouseMove)
-  if (rafId) cancelAnimationFrame(rafId)
-})
 </script>
 
 <template>
-  <div ref="shellRef" class="site-shell" :class="shellClass">
-    <div class="cursor-glow" aria-hidden="true"></div>
-    <div class="particle particle-1" aria-hidden="true"></div>
-    <div class="particle particle-2" aria-hidden="true"></div>
-    <div class="particle particle-3" aria-hidden="true"></div>
-
+  <div class="site-shell" :class="shellClass">
     <header class="topbar" aria-label="站点导航">
       <RouterLink class="brand" to="/" aria-label="回到首页">
         <span class="brand-mark">希</span>
@@ -67,19 +37,46 @@ onUnmounted(() => {
       </RouterLink>
 
       <nav class="nav-links" aria-label="主导航">
-        <RouterLink
-          v-for="item in navItems"
-          :key="item.id"
-          :to="item.href"
-          :aria-current="route.name === item.id ? 'page' : undefined"
-        >
-          {{ item.navLabel }}
-        </RouterLink>
+        <template v-for="item in navItems" :key="item.id">
+          <a
+            v-if="item.type === 'external'"
+            :href="item.href"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ item.navLabel }}
+          </a>
+          <RouterLink
+            v-else
+            :to="item.href"
+            :aria-current="route.name === item.id ? 'page' : undefined"
+          >
+            {{ item.navLabel }}
+          </RouterLink>
+        </template>
       </nav>
 
       <div class="topbar-actions">
+        <a
+          class="rss-trigger"
+          href="https://halo.xiranya.cn/rss.xml"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="RSS 订阅"
+          title="RSS 订阅"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 11a9 9 0 0 1 9 9" />
+            <path d="M4 4a16 16 0 0 1 16 16" />
+            <circle cx="5" cy="19" r="1" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
+
         <RouterLink class="search-trigger" to="/search" aria-label="搜索">
-          <span aria-hidden="true">🔍</span>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
         </RouterLink>
 
         <button
@@ -88,7 +85,13 @@ onUnmounted(() => {
           :aria-label="isDark ? '切换到浅色模式' : '切换到深色模式'"
           @click="toggleTheme"
         >
-          <span aria-hidden="true">{{ isDark ? '☀️' : '🌙' }}</span>
+          <svg v-if="isDark" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </svg>
+          <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+          </svg>
         </button>
 
         <template v-if="isLoggedIn">
@@ -144,6 +147,7 @@ onUnmounted(() => {
 }
 
 .search-trigger,
+.rss-trigger,
 .theme-toggle,
 .user-avatar,
 .login-link {
@@ -152,41 +156,46 @@ onUnmounted(() => {
   justify-content: center;
   min-width: 38px;
   height: 38px;
-  padding: 0 10px;
-  border: 1px solid rgba(34, 116, 165, 0.12);
+  padding: 0 12px;
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.62);
-  font-size: 1rem;
+  color: var(--soft);
+  background: var(--paper);
+  font-size: 0.9rem;
   font-weight: 800;
   text-decoration: none;
   cursor: pointer;
   transition:
     transform 0.2s var(--ease-out),
     border-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out),
     background 0.2s var(--ease-out);
 }
 
 .search-trigger:hover,
+.rss-trigger:hover,
 .theme-toggle:hover,
 .user-avatar:hover,
 .login-link:hover {
   transform: translateY(-1px);
-  border-color: rgba(0, 184, 255, 0.22);
-  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(var(--brand-rgb), 0.25);
+  background: rgba(var(--brand-rgb), 0.08);
 }
 
 html.dark .search-trigger,
+html.dark .rss-trigger,
 html.dark .theme-toggle,
 html.dark .login-link {
-  background: rgba(0, 0, 0, 0.25);
-  border-color: rgba(0, 184, 255, 0.2);
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(var(--brand-rgb), 0.2);
   color: var(--ink);
 }
 
 html.dark .search-trigger:hover,
+html.dark .rss-trigger:hover,
 html.dark .theme-toggle:hover,
 html.dark .login-link:hover {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(var(--brand-rgb), 0.15);
 }
 
 .user-avatar {
@@ -202,10 +211,11 @@ html.dark .login-link:hover {
 }
 
 .search-trigger:focus-visible,
+.rss-trigger:focus-visible,
 .theme-toggle:focus-visible,
 .user-avatar:focus-visible,
 .login-link:focus-visible {
-  outline: 3px solid rgba(0, 184, 255, 0.32);
+  outline: 3px solid rgba(var(--brand-rgb), 0.35);
   outline-offset: 3px;
 }
 </style>

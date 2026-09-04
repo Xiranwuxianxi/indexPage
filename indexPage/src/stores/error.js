@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import api from '../api/client.js'
 
 /**
@@ -21,7 +21,7 @@ export const useErrorStore = defineStore('error', {
       this.error = null
       try {
         const data = await api.getErrors(params)
-        this.errors = data.list || []
+        this.errors = data.records || data.list || []
       } catch (err) {
         this.error = err.message || '加载错误条目失败'
         this.errors = []

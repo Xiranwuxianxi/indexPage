@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import api from '../api/client.js'
 
 /**
@@ -32,7 +32,7 @@ export const useSearchStore = defineStore('search', {
       this.error = null
       try {
         const data = await api.search({ q: this.query, ...this.filters, ...params })
-        this.results = data.list || []
+        this.results = data.records || data.list || []
       } catch (err) {
         this.error = err.message || '搜索失败'
         this.results = []

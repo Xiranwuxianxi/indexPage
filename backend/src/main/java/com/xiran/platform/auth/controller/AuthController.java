@@ -1,6 +1,7 @@
 package com.xiran.platform.auth.controller;
 
 import com.xiran.platform.auth.dto.LoginRequest;
+import com.xiran.platform.auth.dto.RegisterRequest;
 import com.xiran.platform.auth.dto.TokenResponse;
 import com.xiran.platform.auth.service.AuthService;
 import com.xiran.platform.common.response.ApiResponse;
@@ -23,6 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+
+    @PostMapping("/register")
+    @Operation(summary = "邮箱注册并自动登录")
+    public ApiResponse<TokenResponse> register(@Valid @RequestBody RegisterRequest request) {
+        return ApiResponse.success(authService.register(request));
+    }
 
     @PostMapping("/login")
     @Operation(summary = "邮箱密码登录")

@@ -25,14 +25,14 @@ defineProps({
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 260px;
+  min-height: 240px;
   padding: 22px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   color: var(--ink);
   background: var(--paper);
   text-decoration: none;
-  box-shadow: 0 16px 40px rgba(63, 112, 153, 0.1);
+  box-shadow: 0 10px 30px rgba(var(--brand-rgb), 0.06);
   transition:
     transform 0.35s var(--ease-out),
     border-color 0.35s var(--ease-out),
@@ -49,11 +49,12 @@ defineProps({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  background: rgba(0, 184, 255, 0.08);
+  width: 42px;
+  height: 42px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(var(--brand-rgb), 0.18);
+  border-radius: 12px;
+  background: rgba(var(--brand-rgb), 0.07);
   font-size: 1.35rem;
   line-height: 1;
 }
@@ -61,10 +62,10 @@ defineProps({
 .tool-category {
   align-self: flex-start;
   padding: 5px 10px;
-  border: 1px solid rgba(0, 184, 255, 0.26);
+  border: 1px solid rgba(var(--brand-rgb), 0.26);
   border-radius: 8px;
-  color: #0078b4;
-  background: rgba(0, 184, 255, 0.07);
+  color: var(--brand);
+  background: rgba(var(--brand-rgb), 0.07);
   font-size: 0.74rem;
   font-weight: 950;
 }
@@ -101,8 +102,8 @@ defineProps({
 }
 
 html.dark .tool-category {
-  border-color: rgba(0, 184, 255, 0.35);
+  border-color: rgba(var(--brand-rgb), 0.35);
   color: #4fd1ff;
-  background: rgba(0, 184, 255, 0.12);
+  background: rgba(var(--brand-rgb), 0.12);
 }
 </style>

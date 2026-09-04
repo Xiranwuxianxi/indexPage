@@ -10,13 +10,13 @@ const applyTheme = (isDark) => {
     html.classList.add('dark')
     html.style.colorScheme = 'dark'
     if (themeMeta) {
-      themeMeta.setAttribute('content', '#0b1220')
+      themeMeta.setAttribute('content', '#0b1120')
     }
   } else {
     html.classList.remove('dark')
     html.style.colorScheme = 'light'
     if (themeMeta) {
-      themeMeta.setAttribute('content', '#fbfdff')
+      themeMeta.setAttribute('content', '#f8fafc')
     }
   }
 }

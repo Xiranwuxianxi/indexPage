@@ -1,29 +1,67 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import ProjectCard from '../components/ProjectCard.vue'
 import SectionHeading from '../components/SectionHeading.vue'
 import ToolCard from '../components/ToolCard.vue'
 import AppSkeleton from '../components/common/AppSkeleton.vue'
 import ErrorMessage from '../components/common/ErrorMessage.vue'
-import { useSiteStore } from '../stores/site.js'
+import PlatformGrid from '../components/widgets/PlatformGrid.vue'
+import QuickLinks from '../components/widgets/QuickLinks.vue'
+import MarketTicker from '../components/widgets/MarketTicker.vue'
+import WorldClockBoard from '../components/widgets/WorldClockBoard.vue'
 import { useHomeStore } from '../stores/home.js'
+import { useWidgetStore } from '../stores/widgets.js'
 
-const site = useSiteStore()
 const home = useHomeStore()
-const { hero, hotTools, commonErrors, featuredProjects, latestArticles, focusAreas, loading, error } =
-  storeToRefs(home)
+const widget = useWidgetStore()
+const { hero, hotTools, commonErrors, latestArticles, stats, loading, error } = storeToRefs(home)
+const { platforms, worldClock, weather, markets } = storeToRefs(widget)
+
+// 站点数据条：数字滚动动画
+const animatedStats = ref({ toolCount: 0, articleCount: 0, errorCount: 0, totalUsage: 0 })
+
+watch(
+  stats,
+  (val) => {
+    if (!val) return
+    const duration = 1200
+    const start = performance.now()
+    const from = { ...animatedStats.value }
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      animatedStats.value = {
+        toolCount: Math.round(from.toolCount + (val.toolCount - from.toolCount) * eased),
+        articleCount: Math.round(from.articleCount + (val.articleCount - from.articleCount) * eased),
+        errorCount: Math.round(from.errorCount + (val.errorCount - from.errorCount) * eased),
+        totalUsage: Math.round(from.totalUsage + (val.totalUsage - from.totalUsage) * eased),
+      }
+      if (t < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  },
+  { immediate: true },
+)
 
 onMounted(() => {
   home.fetchHome()
+  widget.fetchAll()
+  // 行情 3 秒轮询，保证与行情源秒级对准
+  marketTimer = setInterval(() => widget.fetchMarkets(), 3000)
 })
+
+onUnmounted(() => {
+  if (marketTimer) clearInterval(marketTimer)
+})
+
+let marketTimer = null
 </script>
 
 <template>
   <main class="page-view">
-    <!-- 首屏 -->
+    <!-- 首屏：品牌主视觉 -->
     <section class="hero-panel" aria-labelledby="site-title">
       <div class="hero-copy">
         <template v-if="loading">
@@ -50,42 +88,53 @@ onMounted(() => {
             </RouterLink>
           </div>
 
-          <dl class="metrics reveal reveal-6" aria-label="站点概览">
-            <div v-for="metric in site.metrics" :key="metric.label">
-              <dt>{{ metric.value }}</dt>
-              <dd>{{ metric.label }}</dd>
+          <!-- 站点使用数据条 -->
+          <dl v-if="stats" class="stats-strip reveal reveal-6" aria-label="站点数据">
+            <div class="stat-item">
+              <dt>在线工具</dt>
+              <dd>{{ animatedStats.toolCount }}</dd>
+            </div>
+            <div class="stat-item">
+              <dt>报错方案</dt>
+              <dd>{{ animatedStats.errorCount }}</dd>
+            </div>
+            <div class="stat-item">
+              <dt>技术文章</dt>
+              <dd>{{ animatedStats.articleCount }}</dd>
+            </div>
+            <div class="stat-item">
+              <dt>累计使用</dt>
+              <dd>{{ animatedStats.totalUsage.toLocaleString() }}</dd>
             </div>
           </dl>
         </template>
       </div>
+    </section>
 
-      <aside class="profile-board reveal reveal-3" aria-label="平台动态">
-        <div class="avatar-row">
-          <div class="avatar-frame">
-            <img :src="site.avatarUrl" alt="希燃呀的头像" width="116" height="116" loading="eager" />
-            <span class="avatar-mark">希</span>
-          </div>
-          <div class="identity">
-            <span>Developer Platform</span>
-            <strong>工具 · 方案 · 实验</strong>
-          </div>
-        </div>
+    <!-- 全球时间与天气 -->
+    <SectionHeading
+      eyebrow="WORLD CLOCK &amp; WEATHER"
+      title="全球时间与天气"
+      title-id="home-worldclock-title"
+    />
 
-        <div class="signal-board">
-          <div v-for="signal in site.signals" :key="signal" class="signal-row">
-            <span class="status-light"></span>
-            <span>{{ signal }}</span>
-          </div>
-        </div>
-      </aside>
+    <section class="widget-section" aria-labelledby="home-worldclock-title">
+      <WorldClockBoard
+        :cities="worldClock.cities"
+        :weather="weather"
+        :loading="widget.loading"
+      />
+    </section>
+
+    <!-- 市场指数 -->
+    <SectionHeading eyebrow="MARKETS" title="市场指数" title-id="home-markets-title" />
+
+    <section class="widget-section" aria-labelledby="home-markets-title">
+      <MarketTicker :markets="markets" :loading="widget.loading" />
     </section>
 
     <!-- 热门工具 -->
-    <SectionHeading
-      eyebrow="HOT TOOLS"
-      title="热门工具"
-      title-id="home-tools-title"
-    />
+    <SectionHeading eyebrow="HOT TOOLS" title="热门工具" title-id="home-tools-title" />
 
     <section class="tool-grid" aria-labelledby="home-tools-title">
       <AppSkeleton v-if="loading" :lines="4" />
@@ -93,11 +142,7 @@ onMounted(() => {
     </section>
 
     <!-- 常见开发问题 -->
-    <SectionHeading
-      eyebrow="COMMON ERRORS"
-      title="常见开发问题"
-      title-id="home-errors-title"
-    />
+    <SectionHeading eyebrow="COMMON ERRORS" title="常见开发问题" title-id="home-errors-title" />
 
     <section class="error-list" aria-labelledby="home-errors-title">
       <AppSkeleton v-if="loading" :lines="3" />
@@ -113,35 +158,8 @@ onMounted(() => {
       </RouterLink>
     </section>
 
-    <!-- 精选项目 -->
-    <SectionHeading
-      eyebrow="FEATURED PROJECTS"
-      title="精选项目"
-      title-id="home-projects-title"
-    />
-
-    <section class="project-grid" aria-labelledby="home-projects-title">
-      <AppSkeleton v-if="loading" :lines="4" />
-      <ProjectCard
-        v-for="project in featuredProjects"
-        :key="project.slug"
-        :project="{
-          ...project,
-          id: project.slug,
-          href: project.href,
-          name: project.name,
-          status: project.statusText,
-          summary: project.summary,
-        }"
-      />
-    </section>
-
     <!-- 最新文章 -->
-    <SectionHeading
-      eyebrow="LATEST ARTICLES"
-      title="最新文章"
-      title-id="home-articles-title"
-    />
+    <SectionHeading eyebrow="LATEST ARTICLES" title="最新文章" title-id="home-articles-title" />
 
     <section class="article-list" aria-labelledby="home-articles-title">
       <AppSkeleton v-if="loading" :lines="3" />
@@ -165,65 +183,23 @@ onMounted(() => {
       </RouterLink>
     </section>
 
-    <!-- 技术方向 -->
-    <SectionHeading
-      eyebrow="FOCUS AREAS"
-      title="技术方向"
-      title-id="home-focus-title"
-    />
+    <!-- 平台入口 -->
+    <SectionHeading eyebrow="PLATFORMS" title="平台入口" title-id="home-platforms-title" />
 
-    <section class="focus-grid" aria-labelledby="home-focus-title">
-      <article
-        v-for="(area, index) in focusAreas"
-        :key="area.title"
-        class="focus-card reveal"
-        :class="`reveal-${index + 1}`"
-      >
-        <h3>{{ area.title }}</h3>
-        <ul>
-          <li v-for="item in area.items" :key="item">{{ item }}</li>
-        </ul>
-      </article>
+    <section class="widget-section" aria-labelledby="home-platforms-title">
+      <ErrorMessage
+        v-if="widget.error && !platforms.length"
+        :message="widget.error"
+        @retry="widget.fetchAll"
+      />
+      <PlatformGrid :platforms="platforms" :loading="widget.loading" />
     </section>
 
-    <!-- 联系与订阅 -->
-    <SectionHeading
-      eyebrow="CONNECT"
-      title="联系与订阅"
-      title-id="home-connect-title"
-    />
+    <!-- 快捷导航 -->
+    <SectionHeading eyebrow="QUICK LINKS" title="快捷导航" title-id="home-links-title" />
 
-    <section class="connect-grid" aria-labelledby="home-connect-title">
-      <a
-        class="connect-card"
-        href="https://github.com/Xiranwuxianxi"
-        target="_blank"
-        rel="me noopener noreferrer"
-      >
-        <span aria-hidden="true">🐙</span>
-        <strong>GitHub</strong>
-        <p>关注开源仓库与项目实践。</p>
-      </a>
-      <a class="connect-card" href="mailto:hello@xiranya.cn" rel="noopener noreferrer">
-        <span aria-hidden="true">✉️</span>
-        <strong>邮箱</strong>
-        <p>hello@xiranya.cn</p>
-      </a>
-      <a
-        class="connect-card"
-        href="https://halo.xiranya.cn/rss.xml"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span aria-hidden="true">📡</span>
-        <strong>RSS 订阅</strong>
-        <p>通过 RSS 获取博客与平台更新。</p>
-      </a>
-      <RouterLink class="connect-card" to="/about">
-        <span aria-hidden="true">🤝</span>
-        <strong>合作入口</strong>
-        <p>了解平台定位与联系方式。</p>
-      </RouterLink>
+    <section class="widget-section" aria-labelledby="home-links-title">
+      <QuickLinks />
     </section>
   </main>
 </template>
@@ -232,15 +208,51 @@ onMounted(() => {
 .hero-subtitle {
   margin-top: 18px;
   color: var(--cyan);
-  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
   font-weight: 800;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .tertiary {
   color: var(--ink);
   border-color: var(--line);
   background: var(--paper);
+}
+
+/* 站点数据条 */
+.stats-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 48px);
+  margin: 36px 0 0;
+  padding: 20px 32px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+  backdrop-filter: blur(8px);
+}
+
+.stat-item {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.stat-item dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.stat-item dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.6rem;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
 }
 
 .tool-grid {
@@ -259,9 +271,9 @@ onMounted(() => {
 .article-row {
   display: grid;
   gap: 10px;
-  padding: 18px;
+  padding: 20px 22px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   color: var(--ink);
   background: var(--paper);
   text-decoration: none;
@@ -283,8 +295,8 @@ onMounted(() => {
   justify-self: flex-start;
   padding: 4px 10px;
   border-radius: 6px;
-  color: #0078b4;
-  background: rgba(0, 184, 255, 0.08);
+  color: var(--brand);
+  background: rgba(var(--brand-rgb), 0.08);
   font-size: 0.74rem;
   font-weight: 950;
 }
@@ -327,60 +339,19 @@ onMounted(() => {
   font-size: 0.82rem;
 }
 
-.connect-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 40px;
-}
-
-.connect-card {
-  display: grid;
-  gap: 8px;
-  min-height: 160px;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  color: var(--ink);
-  background: var(--paper);
-  text-decoration: none;
-  transition:
-    transform 0.3s var(--ease-out),
-    border-color 0.3s var(--ease-out),
-    box-shadow 0.3s var(--ease-out);
-}
-
-.connect-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow-hover);
-}
-
-.connect-card span {
-  font-size: 1.6rem;
-}
-
-.connect-card strong {
-  font-size: 1.2rem;
-  font-weight: 950;
-}
-
-.connect-card p {
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.6;
+/* 首页小组件板块（平台入口 / 全球时间与天气） */
+.widget-section {
+  margin-top: 8px;
 }
 
 @media (max-width: 1100px) {
-  .tool-grid,
-  .connect-grid {
+  .tool-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
   .tool-grid,
-  .connect-grid,
   .article-row {
     grid-template-columns: 1fr;
   }
@@ -388,6 +359,11 @@ onMounted(() => {
   .article-row img {
     width: 100%;
     height: auto;
+  }
+
+  .stats-strip {
+    gap: 16px;
+    padding: 16px 18px;
   }
 }
 </style>

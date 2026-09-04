@@ -112,8 +112,8 @@ const typeLabelMap = {
 }
 
 .search-form input:focus {
-  outline: 3px solid rgba(0, 184, 255, 0.2);
-  border-color: rgba(0, 184, 255, 0.4);
+  outline: 3px solid rgba(var(--brand-rgb), 0.2);
+  border-color: rgba(var(--brand-rgb), 0.4);
 }
 
 .hot-searches {
@@ -177,8 +177,8 @@ const typeLabelMap = {
   justify-self: flex-start;
   padding: 4px 10px;
   border-radius: 6px;
-  color: #0078b4;
-  background: rgba(0, 184, 255, 0.08);
+  color: var(--brand);
+  background: rgba(var(--brand-rgb), 0.08);
   font-size: 0.74rem;
   font-weight: 950;
 }

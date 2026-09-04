@@ -58,35 +58,6 @@ import SectionHeading from '../components/SectionHeading.vue'
         </div>
       </div>
 
-      <section class="insight-grid" aria-label="平台能力">
-        <article class="insight-card reveal reveal-1">
-          <h3>在线工具</h3>
-          <ul>
-            <li>Nginx 配置生成器</li>
-            <li>Nginx 配置检查器</li>
-            <li>CORS / JWT 解析器</li>
-            <li>Sitemap / Cron 工具</li>
-          </ul>
-        </article>
-        <article class="insight-card reveal reveal-2">
-          <h3>报错知识库</h3>
-          <ul>
-            <li>Nginx / OpenResty</li>
-            <li>Spring Boot / Java</li>
-            <li>Vue / Vite</li>
-            <li>Docker / Linux</li>
-          </ul>
-        </article>
-        <article class="insight-card reveal reveal-3">
-          <h3>增长闭环</h3>
-          <ul>
-            <li>搜索问题</li>
-            <li>阅读方案</li>
-            <li>使用工具</li>
-            <li>保存与分享</li>
-          </ul>
-        </article>
-      </section>
     </section>
   </main>
 </template>
@@ -140,13 +111,13 @@ import SectionHeading from '../components/SectionHeading.vue'
 
 .timeline-item:hover {
   transform: translateX(4px) scale(1.01);
-  border-color: rgba(0, 184, 255, 0.22);
+  border-color: rgba(var(--brand-rgb), 0.22);
   background: rgba(255, 255, 255, 0.95);
   transition-timing-function: var(--ease-spring);
 }
 
 .timeline-item strong {
-  color: #0078b4;
+  color: var(--brand);
   font-weight: 950;
 }
 
@@ -156,7 +127,7 @@ import SectionHeading from '../components/SectionHeading.vue'
 }
 
 html.dark .timeline-item:hover {
-  background: rgba(0, 184, 255, 0.08);
+  background: rgba(var(--brand-rgb), 0.08);
 }
 
 @media (max-width: 980px) {

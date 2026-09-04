@@ -42,7 +42,7 @@ import { RouterLink } from 'vue-router'
   font-size: clamp(4.8rem, 16vw, 11rem);
   font-weight: 950;
   line-height: 0.9;
-  text-shadow: 0 0 28px rgba(0, 184, 255, 0.2);
+  text-shadow: 0 0 28px rgba(var(--brand-rgb), 0.2);
   animation: float 5s ease-in-out infinite;
 }
 

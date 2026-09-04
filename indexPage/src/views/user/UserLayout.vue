@@ -67,7 +67,7 @@ const menuItems = [
 .user-nav a:hover,
 .user-nav a.is-active {
   color: var(--ink);
-  background: rgba(0, 184, 255, 0.08);
+  background: rgba(var(--brand-rgb), 0.08);
 }
 
 .user-content {

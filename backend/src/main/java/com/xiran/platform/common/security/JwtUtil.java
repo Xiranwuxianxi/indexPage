@@ -23,10 +23,10 @@ public class JwtUtil {
     @Value("${xiran.jwt.secret:}")
     private String jwtSecret;
 
-    @Value("${xiran.jwt.access-token-expiration:3600000}")
+    @Value("${xiran.jwt.access-token-expiration:2592000000}")
     private Long accessTokenExpiration;
 
-    @Value("${xiran.jwt.refresh-token-expiration:604800000}")
+    @Value("${xiran.jwt.refresh-token-expiration:5184000000}")
     private Long refreshTokenExpiration;
 
     private SecretKey getSecretKey() {
@@ -79,6 +79,8 @@ public class JwtUtil {
             log.warn("JWT 已过期");
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
             log.warn("JWT 无效: {}", e.getMessage());
+        } catch (IllegalStateException e) {
+            log.warn("JWT 校验失败: {}", e.getMessage());
         }
         return false;
     }

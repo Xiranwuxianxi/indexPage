@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import { routeSeoMap } from '../config/seo'
 import { applyRouteSeo } from '../utils/seo'
+import { useUserStore } from '../stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -100,6 +101,13 @@ const router = createRouter({
       meta: routeSeoMap.login,
     },
     {
+      path: '/register',
+      alias: '/register/',
+      name: 'register',
+      component: () => import('../views/login/RegisterView.vue'),
+      meta: routeSeoMap.register,
+    },
+    {
       path: '/user',
       alias: '/user/',
       name: 'user',
@@ -174,6 +182,50 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0 }
   },
+})
+
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+
+  // 受保护页面：若本地有 token 但用户信息尚未加载，先拉取资料再判断，
+  // 避免刷新 /user、/admin 页面时被误判为未登录。
+  if (
+    (to.path.startsWith('/user') || to.path.startsWith('/admin')) &&
+    userStore.token &&
+    !userStore.user
+  ) {
+    await userStore.fetchProfile()
+  }
+
+  // 用户中心需要登录
+  if (to.path.startsWith('/user')) {
+    if (!userStore.isLoggedIn) {
+      return next({
+        name: 'login',
+        query: { redirect: to.fullPath },
+        replace: true,
+      })
+    }
+    return next()
+  }
+
+  // 管理后台需要 ADMIN / EDITOR 角色
+  if (to.path.startsWith('/admin')) {
+    if (!userStore.isLoggedIn) {
+      return next({
+        name: 'login',
+        query: { redirect: to.fullPath },
+        replace: true,
+      })
+    }
+    if (!userStore.isAdmin && !userStore.isEditor) {
+      return next({ name: 'home', replace: true })
+    }
+    return next()
+  }
+
+  // 公开页面直接放行
+  next()
 })
 
 router.afterEach((to) => {

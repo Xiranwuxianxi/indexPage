@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import api from '../api/client.js'
 
 /**
@@ -30,7 +30,7 @@ export const useProjectStore = defineStore('project', {
       this.error = null
       try {
         const data = await api.getProjects(params)
-        this.projects = data.list || []
+        this.projects = data.records || data.list || []
       } catch (err) {
         this.error = err.message || '加载项目失败'
         this.projects = []

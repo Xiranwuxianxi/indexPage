@@ -22,4 +22,7 @@ public class ProjectResponse {
     private String cover;
     private List<String> techStack;
     private LocalDateTime updatedAt;
+
+    /** 发布状态：1 发布，0 下线，2 草稿（管理后台编辑用） */
+    private Integer publishStatus;
 }

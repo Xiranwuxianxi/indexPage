@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- 希燃呀开发者平台数据库初始化脚本
 -- 数据库：MySQL 8
 -- 编码：utf8mb4

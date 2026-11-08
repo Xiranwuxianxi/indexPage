@@ -34,6 +34,11 @@ indexPage/.env
 indexPage/.env.local
 indexPage/.env.*.local
 
+# Server-side deployment secrets (keep the committed example file)
+.env
+.env.*
+!.env.example
+
 # Testing
 indexPage/cypress/videos/
 indexPage/cypress/screenshots/

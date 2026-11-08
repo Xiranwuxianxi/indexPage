@@ -1,12 +1,14 @@
 <script setup>
-import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import SectionHeading from '../../components/SectionHeading.vue'
 import AppSkeleton from '../../components/common/AppSkeleton.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import ErrorMessage from '../../components/common/ErrorMessage.vue'
+import { routeSeoMap, siteBaseUrl, siteName } from '../../config/seo'
 import { useToolStore } from '../../stores/tool'
+import { applyRouteSeo } from '../../utils/seo'
 
 const route = useRoute()
 const toolStore = useToolStore()
@@ -16,6 +18,24 @@ const slug = computed(() => route.params.slug)
 onMounted(() => {
   toolStore.fetchTool(slug.value)
 })
+
+// 客户端导航到工具详情时，用真实数据动态更新 meta（构建期预渲染已覆盖爬虫场景）
+watch(
+  () => toolStore.currentTool,
+  (tool) => {
+    if (!tool) {
+      return
+    }
+
+    applyRouteSeo({
+      ...routeSeoMap.tools,
+      title: `${tool.name} - 免费在线使用 | ${siteName}`,
+      description: tool.summary || tool.description || routeSeoMap.tools.description,
+      keywords: [tool.name, tool.category, '在线工具'].filter(Boolean).join(','),
+      canonical: `${siteBaseUrl}/tools/${tool.slug}/`,
+    })
+  },
+)
 
 const toolComponentMap = {
   'nginx-generator': defineAsyncComponent(() => import('./NginxGeneratorForm.vue')),

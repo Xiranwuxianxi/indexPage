@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 -- 初始数据
 -- 密码统一为：xiran123（BCrypt 加密）
 

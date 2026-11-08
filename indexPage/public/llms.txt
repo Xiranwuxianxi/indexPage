@@ -1,0 +1,30 @@
+# 希燃呀开发者平台
+
+> 希燃呀（Xiran）的个人开发者平台，面向中文开发者提供免费的在线开发工具、常见报错解决方案、技术文章、系统教程与开源项目。内容主要覆盖 Nginx/OpenResty、Spring Boot、Vue、Docker、Linux 与 AI 工程化等技术栈。站点对 AI 助手与 AI 搜索引擎完全开放（见 /robots.txt）。
+
+## 核心板块
+
+- [首页](https://xiranya.cn/): 聚合在线工具、报错解决方案、技术文章、教程与项目的入口。
+- [在线工具](https://xiranya.cn/tools/): 免费开发者工具，包括 Nginx 配置生成器、Nginx 配置检查器、CORS 配置生成器、JWT 解析器、Sitemap 检查器、Cron 表达式生成器。
+- [错误知识库](https://xiranya.cn/errors/): 收录 Nginx、Spring Boot、Vue、Docker、Linux 常见报错的完整解决方案（原因、错误示例、正确示例、修复步骤、验证命令）。
+- [技术文章](https://xiranya.cn/articles/): Java 后端、Vue 前端、Nginx/OpenResty、Docker、AI 工程化等技术文章与实战记录。
+- [教程中心](https://xiranya.cn/tutorials/): 按主题整理的系统教程：部署与服务器、Java 后端、Vue 前端、AI 工程化、Linux 与运维。
+- [项目索引](https://xiranya.cn/projects/): 希燃呀的在线工具与开源项目集中入口。
+- [关于](https://xiranya.cn/about/): 平台建设方向、技术实践与内容计划。
+
+## 完整内容索引
+
+- [llms-full.txt](https://xiranya.cn/llms-full.txt): 构建时自动生成的全站内容（文章全文、错误解决方案、工具与项目说明），供 AI 助手直接检索引用。
+- [sitemap.xml](https://xiranya.cn/sitemap.xml): 全部可索引 URL。
+
+## 相关站点
+
+- [技术博客（Halo）](https://halo.xiranya.cn/): 基于 Halo 构建的个人技术博客。
+- [C-Sandbox 在线编译](https://xiranya.cn/csandbox/): 轻量级 C 语言在线编译环境。
+- [简单博客](https://xiranya.cn/myblogs/): 记录想法与生活片段的简单博客。
+
+## 作者与联系
+
+- GitHub: https://github.com/Xiranwuxianxi
+- B 站: https://space.bilibili.com/3494360370907205
+- 抖音: https://www.douyin.com/user/MS4wLjABAAAAlQ6nUTklviASd3lZjc8bQC04lgBcw6YN0MYNxwmhhBVH4tUSZFcDc6cqxpSAupm8

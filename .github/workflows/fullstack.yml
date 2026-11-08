@@ -1,0 +1,165 @@
+name: CI / Deploy
+
+# 推送任意分支或 PR：自动跑测试与构建检查（不会动服务器）
+# 部署：在 Actions 页面手动点 "Run workflow"，
+#       或把仓库变量 AUTO_DEPLOY 设为 true 后，推送到 main/master 时自动部署
+on:
+  pull_request:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "构建通过后部署到服务器"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fullstack-${{ github.ref }}
+  # PR 的旧检查可取消；推送/部署不中途取消，避免服务器半部署
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  backend:
+    name: 后端测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: mvn verify
+        working-directory: backend
+        run: mvn -B verify
+      - name: 上传测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: backend/target/surefire-reports/
+          if-no-files-found: ignore
+
+  frontend:
+    name: 前端构建
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: indexPage/package-lock.json
+      - name: 安装、测试、构建
+        working-directory: indexPage
+        env:
+          VITE_API_BASE_URL: ""
+        run: |
+          npm ci
+          npm run test:seo
+          npx eslint scripts/
+          npm run build
+
+  compose:
+    name: Docker 镜像构建
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 校验 Compose 并构建镜像
+        run: |
+          cp .env.example .env
+          docker compose config --quiet
+          docker compose build backend frontend-builder frontend
+
+  deploy:
+    name: 部署到服务器
+    needs: [backend, frontend, compose]
+    if: >-
+      github.event_name != 'pull_request' &&
+      (
+        (github.event_name == 'workflow_dispatch' && inputs.deploy) ||
+        (github.event_name == 'push' && vars.AUTO_DEPLOY == 'true' &&
+          (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))
+      )
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      APP_DEPLOY_PATH: ${{ secrets.APP_DEPLOY_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 检查部署配置
+        run: |
+          missing=""
+          for v in DEPLOY_HOST DEPLOY_USER APP_DEPLOY_PATH; do
+            [ -n "${!v}" ] || missing="$missing $v"
+          done
+          [ -n "${{ secrets.DEPLOY_KEY }}" ] || missing="$missing DEPLOY_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::缺少 Secrets:$missing（见 DEPLOY.md 的 GitHub Actions 部署一节）"
+            exit 1
+          fi
+          [[ "$DEPLOY_PORT" =~ ^[0-9]{1,5}$ ]] || { echo "::error::DEPLOY_PORT 不是合法端口"; exit 1; }
+          [[ "$APP_DEPLOY_PATH" =~ ^/[a-zA-Z0-9._/-]+$ ]] || { echo "::error::APP_DEPLOY_PATH 必须是绝对路径且只含安全字符"; exit 1; }
+
+      - name: 配置 SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          if [ -n "$DEPLOY_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            echo "::warning::未配置 DEPLOY_KNOWN_HOSTS，改用 ssh-keyscan 自动信任服务器指纹（建议配置该 Secret）"
+            ssh-keyscan -p "$DEPLOY_PORT" "$DEPLOY_HOST" > ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/known_hosts
+          echo "SSH=ssh -i $HOME/.ssh/deploy_key -p $DEPLOY_PORT -o BatchMode=yes" >> "$GITHUB_ENV"
+
+      - name: 检查服务器环境
+        run: |
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "set -e
+            mkdir -p '$APP_DEPLOY_PATH'
+            docker compose version >/dev/null || { echo '服务器未安装 docker compose'; exit 1; }
+            test -f '$APP_DEPLOY_PATH/.env' || { echo '服务器缺少 $APP_DEPLOY_PATH/.env，请先按 DEPLOY.md 创建'; exit 1; }"
+
+      - name: 同步源码
+        run: |
+          rsync -az -e "$SSH" \
+            --exclude='.git/' --exclude='.env' \
+            --exclude='indexPage/node_modules/' --exclude='indexPage/dist/' \
+            --exclude='indexPage/dist-seo-check/' --exclude='backend/target/' \
+            ./ "$DEPLOY_USER@$DEPLOY_HOST:$APP_DEPLOY_PATH/"
+
+      - name: 构建并启动
+        run: |
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "set -e
+            cd '$APP_DEPLOY_PATH'
+            docker compose up -d --build --remove-orphans
+            # 每次发布都重新生成前端静态文件与 SEO 预渲染页
+            docker compose up --no-deps --build --force-recreate frontend-builder
+            docker compose up -d --no-deps --force-recreate frontend
+            docker image prune -f >/dev/null
+            docker compose ps"
+
+      - name: 健康检查
+        run: |
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "set -e
+            cd '$APP_DEPLOY_PATH'
+            port=\$(grep -E '^FRONTEND_PORT=' .env | cut -d= -f2); port=\${port:-8081}
+            for i in \$(seq 1 20); do
+              if curl -fsS \"http://127.0.0.1:\$port/api/v1/home\" >/dev/null; then echo '站点与 API 正常'; exit 0; fi
+              sleep 5
+            done
+            echo '健康检查失败'; docker compose logs --tail=80 backend frontend; exit 1"

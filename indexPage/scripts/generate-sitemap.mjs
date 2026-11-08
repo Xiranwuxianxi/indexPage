@@ -3,22 +3,81 @@ import { resolve } from 'node:path'
 import { Readable } from 'node:stream'
 import { SitemapStream, streamToPromise } from 'sitemap'
 
-import { siteBaseUrl, siteNavigationLinks } from '../src/config/seo.js'
+import { routeSeoMap, siteBaseUrl, siteNavigationLinks } from '../src/config/seo.js'
+import { fetchAllRecords } from './content-api.mjs'
 
 const now = new Date().toISOString().split('T')[0]
 
-const sitemapEntries = siteNavigationLinks
-  .filter((link) => link.url.startsWith(siteBaseUrl))
-  .map((link) => {
-    const isHome = link.url === `${siteBaseUrl}/`
+const dateOnly = (value) => (value ? String(value).split(' ')[0] : now)
 
-    return {
-      url: link.url,
-      lastmod: now,
-      changefreq: isHome ? 'weekly' : 'weekly',
-      priority: isHome ? 1.0 : 0.8,
-    }
-  })
+/* ---------- 静态路由 URL ---------- */
+
+const staticEntries = []
+const seenUrls = new Set()
+const pushStatic = (url, priority) => {
+  if (seenUrls.has(url)) {
+    return
+  }
+  seenUrls.add(url)
+  staticEntries.push({ url, lastmod: now, changefreq: 'weekly', priority })
+}
+
+siteNavigationLinks
+  .filter((link) => link.url.startsWith(siteBaseUrl))
+  .forEach((link) => pushStatic(link.url, link.url === `${siteBaseUrl}/` ? 1.0 : 0.8))
+
+// routeSeoMap 中允许收录的静态路由（补充 siteNavigationLinks 未覆盖的，如 /tutorials/）
+Object.values(routeSeoMap)
+  .filter((seo) => seo.robots?.startsWith('index'))
+  .forEach((seo) => pushStatic(seo.canonical, 0.7))
+
+/* ---------- 动态内容 URL（构建期从后端拉取，API 不可达时降级为仅静态） ---------- */
+
+const [articles, errors, tools, projects] = await Promise.all([
+  fetchAllRecords('/api/v1/articles'),
+  fetchAllRecords('/api/v1/errors'),
+  fetchAllRecords('/api/v1/tools'),
+  fetchAllRecords('/api/v1/projects'),
+])
+
+const dynamicEntries = [
+  ...articles
+    .filter((a) => a?.slug)
+    .map((a) => ({
+      url: `${siteBaseUrl}/articles/${a.slug}/`,
+      lastmod: dateOnly(a.updatedAt || a.publishedAt),
+      changefreq: 'monthly',
+      priority: 0.7,
+    })),
+  ...errors
+    .filter((e) => e?.slug)
+    .map((e) => ({
+      url: `${siteBaseUrl}${(e.href || `/errors/${e.category}/${e.slug}`).replace(/\/+$/, '')}/`,
+      lastmod: dateOnly(e.updatedAt),
+      changefreq: 'monthly',
+      priority: 0.7,
+    })),
+  ...tools
+    .filter((t) => t?.slug)
+    .map((t) => ({
+      url: `${siteBaseUrl}/tools/${t.slug}/`,
+      lastmod: dateOnly(t.updatedAt),
+      changefreq: 'monthly',
+      priority: 0.8,
+    })),
+  ...projects
+    .filter((p) => p?.slug)
+    .map((p) => ({
+      url: `${siteBaseUrl}/projects/${p.slug}/`,
+      lastmod: dateOnly(p.updatedAt),
+      changefreq: 'monthly',
+      priority: 0.6,
+    })),
+]
+
+const sitemapEntries = [...staticEntries, ...dynamicEntries]
+
+/* ---------- 输出 ---------- */
 
 const stream = new SitemapStream({
   hostname: siteBaseUrl,
@@ -46,4 +105,6 @@ const prettyXml = xml
 const outputPath = resolve(process.cwd(), 'public', 'sitemap.xml')
 writeFileSync(outputPath, prettyXml)
 
-console.log(`Sitemap generated with ${sitemapEntries.length} URLs: ${outputPath}`)
+console.log(
+  `Sitemap generated with ${sitemapEntries.length} URLs (static ${staticEntries.length}, dynamic ${dynamicEntries.length}): ${outputPath}`,
+)

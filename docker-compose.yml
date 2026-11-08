@@ -1,44 +1,55 @@
-﻿version: "3.8"
+name: ${COMPOSE_PROJECT_NAME:-xiran-platform}
 
 services:
   mysql:
     image: mysql:8.0
-    container_name: xiran-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
       MYSQL_DATABASE: ${MYSQL_DB:-xiran_platform}
       MYSQL_USER: ${MYSQL_USER:-xiran}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-xiran_password}
-    ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
     volumes:
       - mysql_data:/var/lib/mysql
       - ./backend/src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci",
+      ]
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test:
+        [
+          "CMD-SHELL",
+          'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent',
+        ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
-    container_name: xiran-redis
     restart: unless-stopped
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+    command:
+      [
+        "sh",
+        "-c",
+        'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"',
+      ]
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", 'redis-cli -a "$$REDIS_PASSWORD" ping | grep -q PONG']
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   backend:
     build: ./backend
-    container_name: xiran-backend
     restart: unless-stopped
     depends_on:
       mysql:
@@ -46,20 +57,61 @@ services:
       redis:
         condition: service_healthy
     environment:
+      SPRING_PROFILES_ACTIVE: prod
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DB: ${MYSQL_DB:-xiran_platform}
       MYSQL_USER: ${MYSQL_USER:-xiran}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-xiran_password}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      XIRAN_JWT_SECRET: ${XIRAN_JWT_SECRET:-change_this_secret_in_production}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+      XIRAN_JWT_SECRET: ${XIRAN_JWT_SECRET:?Set XIRAN_JWT_SECRET in .env}
       XIRAN_ACCESS_TOKEN_EXPIRATION: ${XIRAN_ACCESS_TOKEN_EXPIRATION:-3600000}
       XIRAN_REFRESH_TOKEN_EXPIRATION: ${XIRAN_REFRESH_TOKEN_EXPIRATION:-604800000}
-      XIRAN_CORS_ALLOWED_ORIGINS: ${XIRAN_CORS_ALLOWED_ORIGINS:-*}
+      # 前端经同源 /api 访问后端，可留空；仅当有其他域名直接跨域调用后端时才需要填写
+      XIRAN_CORS_ALLOWED_ORIGINS: ${XIRAN_CORS_ALLOWED_ORIGINS:-}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75}
+      TZ: Asia/Shanghai
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://127.0.0.1:8080/api/v1/home || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+
+  frontend-builder:
+    build:
+      context: ./indexPage
+      dockerfile: Dockerfile.build
+    restart: "no"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      PRERENDER_API_BASE: http://backend:8080
+    volumes:
+      - frontend_site:/site
+
+  frontend:
+    build: ./indexPage
+    restart: unless-stopped
+    depends_on:
+      frontend-builder:
+        condition: service_completed_successfully
+    environment:
+      BACKEND_UPSTREAM: backend:8080
     ports:
-      - "${BACKEND_PORT:-8080}:8080"
+      # 唯一对外暴露的端口；FRONTEND_BIND=127.0.0.1 可改为仅本机（前面再套 HTTPS 反代）
+      - "${FRONTEND_BIND:-0.0.0.0}:${FRONTEND_PORT:-8081}:80"
+    volumes:
+      - frontend_site:/usr/share/nginx/html:ro
 
 volumes:
   mysql_data:
   redis_data:
+  frontend_site:

@@ -1,12 +1,14 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import SectionHeading from '../../components/SectionHeading.vue'
 import AppSkeleton from '../../components/common/AppSkeleton.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import ErrorMessage from '../../components/common/ErrorMessage.vue'
+import { routeSeoMap, siteBaseUrl, siteName } from '../../config/seo'
 import { useErrorStore } from '../../stores/error'
+import { applyRouteSeo } from '../../utils/seo'
 
 const route = useRoute()
 const errorStore = useErrorStore()
@@ -15,6 +17,29 @@ const slug = computed(() => route.params.slug)
 onMounted(() => {
   errorStore.fetchError(slug.value)
 })
+
+// 客户端导航到错误详情时，用真实数据动态更新 meta（构建期预渲染已覆盖爬虫场景）
+watch(
+  () => errorStore.currentError,
+  (error) => {
+    if (!error) {
+      return
+    }
+
+    const href = error.href || `/errors/${error.category}/${error.slug}`
+
+    applyRouteSeo({
+      ...routeSeoMap.errors,
+      title: `${error.title} - 原因与解决方案 | ${siteName}`,
+      description: error.summary || routeSeoMap.errors.description,
+      keywords:
+        [error.category && `${error.category}错误`, error.title, '错误解决方案']
+          .filter(Boolean)
+          .join(',') || routeSeoMap.errors.keywords,
+      canonical: `${siteBaseUrl}${href.replace(/\/+$/, '')}/`,
+    })
+  },
+)
 </script>
 
 <template>

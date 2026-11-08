@@ -1,12 +1,14 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import SectionHeading from '../../components/SectionHeading.vue'
 import AppSkeleton from '../../components/common/AppSkeleton.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import ErrorMessage from '../../components/common/ErrorMessage.vue'
+import { routeSeoMap, siteBaseUrl, siteName } from '../../config/seo'
 import { useArticleStore } from '../../stores/article'
+import { applyRouteSeo } from '../../utils/seo'
 
 const route = useRoute()
 const articleStore = useArticleStore()
@@ -15,6 +17,26 @@ const slug = computed(() => route.params.slug)
 onMounted(() => {
   articleStore.fetchArticle(slug.value)
 })
+
+// 客户端导航到文章详情时，用真实文章数据动态更新 meta（构建期预渲染已覆盖爬虫场景）
+watch(
+  () => articleStore.currentArticle,
+  (article) => {
+    if (!article) {
+      return
+    }
+
+    applyRouteSeo({
+      ...routeSeoMap.articles,
+      title: `${article.title} | ${siteName}`,
+      description: article.summary || routeSeoMap.articles.description,
+      keywords:
+        [article.category, ...(article.tags || [])].filter(Boolean).join(',') ||
+        routeSeoMap.articles.keywords,
+      canonical: `${siteBaseUrl}/articles/${article.slug}/`,
+    })
+  },
+)
 </script>
 
 <template>
